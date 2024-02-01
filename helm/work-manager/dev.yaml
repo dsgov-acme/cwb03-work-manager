@@ -24,3 +24,5 @@ env:
   PUBSUB_EMULATOR_ENABLED: false # set to true to enable emulator
   # cwb03-events publisher topics separated by comma
   PUBLISHER_TOPICS: projects/cwb03-dev-a1fe/topics/DOCUMENT_PROCESSING_INITIATION,projects/cwb03-dev-a1fe/topics/APPLICATION_ROLE_REPORTING,projects/cwb03-dev-a1fe/topics/NOTIFICATION_REQUESTS,projects/cwb03-dev-a1fe/topics/AUDIT_EVENTS_RECORDING
+  INDIVIDUAL_PROFILE_CLAIM_URL: "https://public-dev.cwb03.dsgov.demo.nuvalence.io/claim-invitation"
+  EMPLOYER_PROFILE_CLAIM_URL: "https://employer-dev.cwb03.dsgov.demo.nuvalence.io/claim-invitation"
