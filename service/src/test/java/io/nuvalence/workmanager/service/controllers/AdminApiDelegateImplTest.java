@@ -1196,8 +1196,8 @@ class AdminApiDelegateImplTest {
                 .thenReturn(counts);
 
         mockMvc.perform(
-                get("/api/v1/admin/records/" + recordDefinitionKey + "/counts")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        get("/api/v1/admin/records/" + recordDefinitionKey + "/counts")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[?(@.tabLabel == 'one')].count").value(1))
@@ -1209,8 +1209,8 @@ class AdminApiDelegateImplTest {
         when(authorizationHandler.isAllowed("view", "dashboard_configuration")).thenReturn(false);
 
         mockMvc.perform(
-                get("/api/v1/admin/records/key/counts")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        get("/api/v1/admin/records/key/counts")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 

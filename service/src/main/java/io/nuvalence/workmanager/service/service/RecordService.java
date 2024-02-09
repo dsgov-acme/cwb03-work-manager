@@ -45,7 +45,8 @@ public class RecordService {
      * @return The newly created record
      * @throws MissingSchemaException if the record definition references a schema that does not exist
      */
-    public Record createRecord(RecordDefinition definition, Transaction transaction, RecordCreationRequest request)
+    public Record createRecord(
+            RecordDefinition definition, Transaction transaction, RecordCreationRequest request)
             throws MissingSchemaException {
         return repository.save(factory.createRecord(definition, transaction, request));
     }

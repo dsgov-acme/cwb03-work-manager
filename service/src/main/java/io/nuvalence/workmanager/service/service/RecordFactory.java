@@ -46,7 +46,8 @@ public class RecordFactory {
      * @return The newly created record
      * @throws MissingSchemaException if the record definition references a schema that does not exist
      */
-    public Record createRecord(RecordDefinition definition, Transaction transaction, RecordCreationRequest request)
+    public Record createRecord(
+            RecordDefinition definition, Transaction transaction, RecordCreationRequest request)
             throws MissingSchemaException {
         String createdByUserId = null;
 
@@ -68,13 +69,15 @@ public class RecordFactory {
             entityMapper.applyMappedPropertiesToEntity(entity, request.getData());
         }
 
-        final String transactionStatus = StringUtils.isNotEmpty(request.getStatus())
-                ? request.getStatus()
-                : transaction.getStatus();
+        final String transactionStatus =
+                StringUtils.isNotEmpty(request.getStatus())
+                        ? request.getStatus()
+                        : transaction.getStatus();
         return Record.builder()
-                .externalId(StringUtils.isNotEmpty(request.getExternalId())
-                        ? request.getExternalId()
-                        : generateExternalId())
+                .externalId(
+                        StringUtils.isNotEmpty(request.getExternalId())
+                                ? request.getExternalId()
+                                : generateExternalId())
                 .recordDefinitionKey(definition.getKey())
                 .status(StringUtils.isNotEmpty(transactionStatus) ? transactionStatus : "")
                 .expires(

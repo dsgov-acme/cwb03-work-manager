@@ -72,8 +72,7 @@ class DashboardConfigurationMapperTest {
         RecordDefinitionCountsModel expected = new RecordDefinitionCountsModel();
         expected.setTabLabel("one");
         expected.setCount(1L);
-        RecordDefinitionCountsModel result =
-                mapper.mapRecordDefinitionCount("one", 1L);
+        RecordDefinitionCountsModel result = mapper.mapRecordDefinitionCount("one", 1L);
 
         assertEquals(expected.getCount(), result.getCount());
         assertEquals(expected.getTabLabel(), result.getTabLabel());

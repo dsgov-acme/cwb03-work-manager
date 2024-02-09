@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
@@ -18,8 +17,6 @@ import io.nuvalence.workmanager.service.generated.models.RecordCreationRequest;
 import io.nuvalence.workmanager.service.mapper.EntityMapper;
 import io.nuvalence.workmanager.service.mapper.MissingSchemaException;
 import io.nuvalence.workmanager.service.repository.RecordRepository;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +32,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,10 +70,8 @@ class RecordFactoryTest {
                 createTransaction(definition.getId(), definition.getKey(), schema);
         Map<String, Object> data = new HashMap<>();
         data.put("one", 1);
-        final RecordCreationRequest request = new RecordCreationRequest()
-                .data(data)
-                .externalId("123456789")
-                .status("Active");
+        final RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
         final Record record = createRecord(definition, transaction, request);
 
         // Mock the Authentication object to return null
@@ -93,10 +90,8 @@ class RecordFactoryTest {
                 createTransaction(definition.getId(), definition.getKey(), schema);
         Map<String, Object> data = new HashMap<>();
         data.put("one", 1);
-        final RecordCreationRequest request = new RecordCreationRequest()
-                .data(data)
-                .externalId("123456789")
-                .status("Active");
+        final RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
         final Record record = createRecord(definition, transaction, request);
 
         Mockito.when(repository.save(any(Record.class))).thenReturn(record);
@@ -122,17 +117,16 @@ class RecordFactoryTest {
                 createTransaction(definition.getId(), definition.getKey(), schema);
         Map<String, Object> data = new HashMap<>();
         data.put("one", 1);
-        final RecordCreationRequest request = new RecordCreationRequest()
-                .data(data)
-                .externalId("123456789")
-                .status("Active");
+        final RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
         Mockito.lenient()
                 .when(schemaService.getSchemaByKey(definition.getSchemaKey()))
                 .thenReturn(Optional.empty());
 
         // Act and Assert
         assertThrows(
-                MissingSchemaException.class, () -> factory.createRecord(definition, transaction, request));
+                MissingSchemaException.class,
+                () -> factory.createRecord(definition, transaction, request));
     }
 
     private RecordDefinition createRecordDefinition() {
@@ -145,11 +139,16 @@ class RecordFactoryTest {
                 .build();
     }
 
-    private Record createRecord(RecordDefinition recordDefinition, Transaction transaction,
-                                RecordCreationRequest request) {
+    private Record createRecord(
+            RecordDefinition recordDefinition,
+            Transaction transaction,
+            RecordCreationRequest request) {
         return Record.builder()
                 .recordDefinitionKey("key")
-                .externalId(StringUtils.isNotEmpty(request.getExternalId()) ? request.getExternalId() : "y")
+                .externalId(
+                        StringUtils.isNotEmpty(request.getExternalId())
+                                ? request.getExternalId()
+                                : "y")
                 .recordDefinition(recordDefinition)
                 .status(StringUtils.isNotEmpty(request.getStatus()) ? request.getStatus() : "")
                 .expires(OffsetDateTime.now(clock).plus(recordDefinition.getExpirationDuration()))

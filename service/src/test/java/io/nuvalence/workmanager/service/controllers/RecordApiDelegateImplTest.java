@@ -33,7 +33,6 @@ import io.nuvalence.workmanager.service.service.TransactionService;
 import io.nuvalence.workmanager.service.usermanagementapi.models.User;
 import io.nuvalence.workmanager.service.utils.auth.CurrentUserUtility;
 import io.nuvalence.workmanager.service.utils.testutils.StringDateUtils;
-import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,6 +59,7 @@ import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -142,7 +142,8 @@ class RecordApiDelegateImplTest {
 
         Record record = createRecord(recordDefinition, transaction, testUser);
 
-        Mockito.when(recordService.createRecord(recordDefinition, transaction, request)).thenReturn(record);
+        Mockito.when(recordService.createRecord(recordDefinition, transaction, request))
+                .thenReturn(record);
 
         final String postBody = new ObjectMapper().writeValueAsString(request);
 

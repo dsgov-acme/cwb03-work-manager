@@ -126,11 +126,18 @@ public class DashboardConfigurationService {
      * @return return of tab label to count.
      */
     public Map<String, Long> countTabsForRecordDefinition(String transactionDefinitionKey) {
-        RecordDefinition recordDefinition = recordDefinitionRepository.findByKey(transactionDefinitionKey)
-                .orElseThrow(() -> new NotFoundException("A record definition with the given key does not exist."));
+        RecordDefinition recordDefinition =
+                recordDefinitionRepository
+                        .findByKey(transactionDefinitionKey)
+                        .orElseThrow(
+                                () ->
+                                        new NotFoundException(
+                                                "A record definition with the given key does not"
+                                                        + " exist."));
 
         Map<String, Long> counts = new HashMap<>();
-        List<Object[]> statusCounts = recordRepository.getStatusCountByRecordDefinitionKey(recordDefinition.getKey());
+        List<Object[]> statusCounts =
+                recordRepository.getStatusCountByRecordDefinitionKey(recordDefinition.getKey());
 
         for (Object[] statusCount : statusCounts) {
             counts.put((String) statusCount[0], (Long) statusCount[1]);

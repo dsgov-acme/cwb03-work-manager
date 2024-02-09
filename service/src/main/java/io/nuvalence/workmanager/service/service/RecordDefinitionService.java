@@ -71,7 +71,7 @@ public class RecordDefinitionService {
         }
 
         if (recordDefinition.getRecordFormConfigurationSelectionRules() != null
-            && !recordDefinition.getRecordFormConfigurationSelectionRules().isEmpty()) {
+                && !recordDefinition.getRecordFormConfigurationSelectionRules().isEmpty()) {
             recordDefinition
                     .getRecordFormConfigurationSelectionRules()
                     .forEach(rule -> rule.setRecordDefinition(recordDefinition));

@@ -14,14 +14,13 @@ import io.nuvalence.workmanager.service.repository.DashboardConfigurationReposit
 import io.nuvalence.workmanager.service.repository.RecordDefinitionRepository;
 import io.nuvalence.workmanager.service.repository.RecordRepository;
 import io.nuvalence.workmanager.service.repository.TransactionRepository;
-import java.util.ArrayList;
-import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -118,12 +117,13 @@ class DashboardConfigurationServiceTest {
     void testGetRecordCountsByRecordDefinitionKeyNotFound() {
         String recordDefinitionKey = "key";
         when(recordDefinitionRepository.findByKey(recordDefinitionKey))
-                .thenThrow(new NotFoundException("A record definition with the given key does not exist."));
+                .thenThrow(
+                        new NotFoundException(
+                                "A record definition with the given key does not exist."));
 
         assertThrows(
                 NotFoundException.class,
-                () -> service.countTabsForRecordDefinition(recordDefinitionKey)
-        );
+                () -> service.countTabsForRecordDefinition(recordDefinitionKey));
     }
 
     @Test
@@ -156,17 +156,12 @@ class DashboardConfigurationServiceTest {
 
     @Test
     void testTabsForRecordDefinition() {
-        RecordDefinition recordDefinition =
-                RecordDefinition.builder()
-                        .key("key")
-                        .build();
-        when(recordDefinitionRepository.findByKey("key"))
-                .thenReturn(Optional.of(recordDefinition));
+        RecordDefinition recordDefinition = RecordDefinition.builder().key("key").build();
+        when(recordDefinitionRepository.findByKey("key")).thenReturn(Optional.of(recordDefinition));
 
         List<Object[]> recordCounts = new ArrayList<>();
-        recordCounts.add(new Object[] { "one", 1L });
-        when(recordRepository.getStatusCountByRecordDefinitionKey("key"))
-                .thenReturn(recordCounts);
+        recordCounts.add(new Object[] {"one", 1L});
+        when(recordRepository.getStatusCountByRecordDefinitionKey("key")).thenReturn(recordCounts);
 
         Map<String, Long> result = service.countTabsForRecordDefinition("key");
 

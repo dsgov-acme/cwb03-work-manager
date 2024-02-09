@@ -719,12 +719,11 @@ public class AdminApiDelegateImpl implements AdminApiDelegate {
         recordDefinition.setCreatedBy(existingRecordDefinition.getCreatedBy());
         if (recordDefinition.getFormConfigurations() == null
                 && existingRecordDefinition.getFormConfigurations() != null) {
-            recordDefinition.setFormConfigurations(existingRecordDefinition.getFormConfigurations());
+            recordDefinition.setFormConfigurations(
+                    existingRecordDefinition.getFormConfigurations());
         }
 
-        recordDefinition.setCreatedTimestamp(
-                existingRecordDefinition.getCreatedTimestamp()
-        );
+        recordDefinition.setCreatedTimestamp(existingRecordDefinition.getCreatedTimestamp());
 
         recordDefinitionService.saveRecordDefinition(recordDefinition);
 
@@ -742,7 +741,8 @@ public class AdminApiDelegateImpl implements AdminApiDelegate {
     }
 
     @Override
-    public ResponseEntity<List<RecordDefinitionCountsModel>> getRecordDefinitionCounts(String recordDefinitionKey) {
+    public ResponseEntity<List<RecordDefinitionCountsModel>> getRecordDefinitionCounts(
+            String recordDefinitionKey) {
         if (!authorizationHandler.isAllowed(VIEW_CERBOS_ACTION, DASHBOARD_CONFIGURATION)) {
             throw new ForbiddenException();
         }
@@ -753,8 +753,9 @@ public class AdminApiDelegateImpl implements AdminApiDelegate {
                         .entrySet()
                         .stream()
                         .map(
-                                countEntry -> dashboardConfigurationMapper.mapRecordDefinitionCount(
-                                        countEntry.getKey(), countEntry.getValue()))
+                                countEntry ->
+                                        dashboardConfigurationMapper.mapRecordDefinitionCount(
+                                                countEntry.getKey(), countEntry.getValue()))
                         .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(result);

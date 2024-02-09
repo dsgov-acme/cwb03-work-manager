@@ -22,7 +22,6 @@ import io.nuvalence.workmanager.service.mapper.EntityMapper;
 import io.nuvalence.workmanager.service.mapper.MissingSchemaException;
 import io.nuvalence.workmanager.service.models.RecordFilters;
 import io.nuvalence.workmanager.service.repository.RecordRepository;
-import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -36,6 +35,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -76,13 +76,14 @@ class RecordServiceTest {
         Record record = new Record();
         Map<String, Object> data = new HashMap<>();
         data.put("one", 1);
-        RecordCreationRequest request = new RecordCreationRequest()
-                .data(data)
-                .externalId("123456789")
-                .status("Active");
+        RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
 
         // Mock behavior
-        when(recordFactory.createRecord(any(RecordDefinition.class), any(Transaction.class), any(RecordCreationRequest.class)))
+        when(recordFactory.createRecord(
+                        any(RecordDefinition.class),
+                        any(Transaction.class),
+                        any(RecordCreationRequest.class)))
                 .thenReturn(record);
         when(recordRepository.save(any(Record.class))).thenReturn(record);
 
