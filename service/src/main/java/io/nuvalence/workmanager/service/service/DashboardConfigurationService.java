@@ -1,12 +1,15 @@
 package io.nuvalence.workmanager.service.service;
 
 import io.nuvalence.workmanager.service.config.exceptions.BusinessLogicException;
+import io.nuvalence.workmanager.service.domain.record.RecordDefinition;
 import io.nuvalence.workmanager.service.domain.transaction.DashboardConfiguration;
 import io.nuvalence.workmanager.service.domain.transaction.DashboardTabConfiguration;
 import io.nuvalence.workmanager.service.domain.transaction.TransactionPriority;
 import io.nuvalence.workmanager.service.models.SearchTransactionsFilters;
 import io.nuvalence.workmanager.service.models.TransactionFilters;
 import io.nuvalence.workmanager.service.repository.DashboardConfigurationRepository;
+import io.nuvalence.workmanager.service.repository.RecordDefinitionRepository;
+import io.nuvalence.workmanager.service.repository.RecordRepository;
 import io.nuvalence.workmanager.service.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -37,6 +40,8 @@ public class DashboardConfigurationService {
     private final TransactionDefinitionSetOrderService transactionDefinitionSetOrderService;
     private final TransactionRepository transactionRepository;
     private final TransactionDefinitionService transactionDefinitionService;
+    private final RecordDefinitionRepository recordDefinitionRepository;
+    private final RecordRepository recordRepository;
 
     /**
      * Gets all dashboards that are expected to be listed.
@@ -113,6 +118,24 @@ public class DashboardConfigurationService {
                 dashboardConfiguration, countResults, statusCounts, priorityCounts);
 
         return countResults;
+    }
+
+    /**
+     * Counts the number of records for each tab in record definition.
+     * @param transactionDefinitionKey record definition key.
+     * @return return of tab label to count.
+     */
+    public Map<String, Long> countTabsForRecordDefinition(String transactionDefinitionKey) {
+        RecordDefinition recordDefinition = recordDefinitionRepository.findByKey(transactionDefinitionKey)
+                .orElseThrow(() -> new NotFoundException("A record definition with the given key does not exist."));
+
+        Map<String, Long> counts = new HashMap<>();
+        List<Object[]> statusCounts = recordRepository.getStatusCountByRecordDefinitionKey(recordDefinition.getKey());
+
+        for (Object[] statusCount : statusCounts) {
+            counts.put((String) statusCount[0], (Long) statusCount[1]);
+        }
+        return counts;
     }
 
     private void processDashboardTab(

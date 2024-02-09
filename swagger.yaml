@@ -496,6 +496,29 @@ paths:
                 $ref: '#/components/schemas/RecordDefinitionResponseModel'
         '404':
           description: A record with the given key does not exist.
+  /admin/records/{recordDefinitionKey}/counts:
+    get:
+      summary: Get record counts per tab for a given recordDefinitionKey.
+      operationId: getRecordDefinitionCounts
+      tags: [ 'Admin' ]
+      parameters:
+        - in: path
+          name: recordDefinitionKey
+          description: Unique record definition key.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The requested record definition counts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecordDefinitionCountsModel'
+        '404':
+          description: A record definition with the given key does not exist.
   /admin/records/{recordDefinitionKey}/forms:
     post:
       summary: Creates a new form configuration that belongs to a given Record Definition.
@@ -3252,6 +3275,14 @@ components:
             lastUpdatedTimestamp:
               type: string
               format: date-time
+    RecordDefinitionCountsModel:
+      type: object
+      properties:
+        tabLabel:
+          type: string
+        count:
+          type: integer
+          format: int64
     PagedRecordDefinitionResponseModel:
       description: Paged response detailing a collection of record definitions.
       type: object
@@ -3977,6 +4008,13 @@ components:
         transactionId:
           type: string
           format: uuid
+        status:
+          type: string
+        externalId:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
     RecordUpdateRequest:
       type: object
       required:
@@ -4213,7 +4251,7 @@ components:
     SortByRecord:
       type: string
       default: createdTimestamp
-      pattern: ^(id|createdTimestamp|lastUpdatedTimestamp|status|key)$
+      pattern: ^(id|createdTimestamp|lastUpdatedTimestamp|status|key|externalId)$
     SortByRecordDefinition:
       type: string
       default: name

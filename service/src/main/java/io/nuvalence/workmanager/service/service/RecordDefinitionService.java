@@ -70,6 +70,13 @@ public class RecordDefinitionService {
             throw new ProvidedDataException("Schema key not found");
         }
 
+        if (recordDefinition.getRecordFormConfigurationSelectionRules() != null
+            && !recordDefinition.getRecordFormConfigurationSelectionRules().isEmpty()) {
+            recordDefinition
+                    .getRecordFormConfigurationSelectionRules()
+                    .forEach(rule -> rule.setRecordDefinition(recordDefinition));
+        }
+
         return repository.save(recordDefinition);
     }
 }

@@ -6,11 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import io.nuvalence.workmanager.service.domain.record.RecordDefinition;
 import io.nuvalence.workmanager.service.domain.transaction.DashboardConfiguration;
 import io.nuvalence.workmanager.service.domain.transaction.DashboardTabConfiguration;
 import io.nuvalence.workmanager.service.domain.transaction.TransactionDefinitionSet;
 import io.nuvalence.workmanager.service.repository.DashboardConfigurationRepository;
+import io.nuvalence.workmanager.service.repository.RecordDefinitionRepository;
+import io.nuvalence.workmanager.service.repository.RecordRepository;
 import io.nuvalence.workmanager.service.repository.TransactionRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +39,10 @@ class DashboardConfigurationServiceTest {
 
     @Mock private TransactionRepository transactionRepository;
 
+    @Mock private RecordDefinitionRepository recordDefinitionRepository;
+
+    @Mock private RecordRepository recordRepository;
+
     @Mock private TransactionDefinitionService transactionDefinitionService;
 
     private DashboardConfigurationService service;
@@ -45,7 +54,9 @@ class DashboardConfigurationServiceTest {
                         repository,
                         transactionDefinitionSetOrderService,
                         transactionRepository,
-                        transactionDefinitionService);
+                        transactionDefinitionService,
+                        recordDefinitionRepository,
+                        recordRepository);
     }
 
     @Test
@@ -104,6 +115,18 @@ class DashboardConfigurationServiceTest {
     }
 
     @Test
+    void testGetRecordCountsByRecordDefinitionKeyNotFound() {
+        String recordDefinitionKey = "key";
+        when(recordDefinitionRepository.findByKey(recordDefinitionKey))
+                .thenThrow(new NotFoundException("A record definition with the given key does not exist."));
+
+        assertThrows(
+                NotFoundException.class,
+                () -> service.countTabsForRecordDefinition(recordDefinitionKey)
+        );
+    }
+
+    @Test
     void testCountTabsForDashboardSimpleStatus() {
         DashboardTabConfiguration tabConfiguration =
                 DashboardTabConfiguration.builder()
@@ -128,6 +151,27 @@ class DashboardConfigurationServiceTest {
 
         assertEquals(1, result.size());
         assertTrue(result.keySet().contains("one"));
+        assertEquals(1L, result.get("one"));
+    }
+
+    @Test
+    void testTabsForRecordDefinition() {
+        RecordDefinition recordDefinition =
+                RecordDefinition.builder()
+                        .key("key")
+                        .build();
+        when(recordDefinitionRepository.findByKey("key"))
+                .thenReturn(Optional.of(recordDefinition));
+
+        List<Object[]> recordCounts = new ArrayList<>();
+        recordCounts.add(new Object[] { "one", 1L });
+        when(recordRepository.getStatusCountByRecordDefinitionKey("key"))
+                .thenReturn(recordCounts);
+
+        Map<String, Long> result = service.countTabsForRecordDefinition("key");
+
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey("one"));
         assertEquals(1L, result.get("one"));
     }
 

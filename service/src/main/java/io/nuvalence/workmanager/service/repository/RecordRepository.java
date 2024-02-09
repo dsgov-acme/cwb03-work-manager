@@ -1,6 +1,7 @@
 package io.nuvalence.workmanager.service.repository;
 
 import io.nuvalence.workmanager.service.domain.record.Record;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,7 @@ public interface RecordRepository
             "UPDATE Record r SET r.status = 'Expired' WHERE r.expires < CURRENT_TIMESTAMP AND"
                     + " r.status <> 'Expired'")
     int updateStatusForExpiredRecords();
+
+    @Query("SELECT r.status, COUNT(r) FROM Record r WHERE r.recordDefinitionKey = ?1 GROUP BY r.status")
+    List<Object[]> getStatusCountByRecordDefinitionKey(String recordDefinitionKey);
 }

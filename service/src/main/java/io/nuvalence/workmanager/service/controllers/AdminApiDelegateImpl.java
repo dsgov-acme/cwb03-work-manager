@@ -25,6 +25,7 @@ import io.nuvalence.workmanager.service.generated.models.PagedTransactionDefinit
 import io.nuvalence.workmanager.service.generated.models.PagedTransactionDefinitionSetModel;
 import io.nuvalence.workmanager.service.generated.models.PagedWorkflowModel;
 import io.nuvalence.workmanager.service.generated.models.ParentSchemas;
+import io.nuvalence.workmanager.service.generated.models.RecordDefinitionCountsModel;
 import io.nuvalence.workmanager.service.generated.models.RecordDefinitionCreateModel;
 import io.nuvalence.workmanager.service.generated.models.RecordDefinitionResponseModel;
 import io.nuvalence.workmanager.service.generated.models.RecordDefinitionUpdateModel;
@@ -715,6 +716,16 @@ public class AdminApiDelegateImpl implements AdminApiDelegate {
 
         recordDefinition.setKey(key);
         recordDefinition.setId(existingRecordDefinition.getId());
+        recordDefinition.setCreatedBy(existingRecordDefinition.getCreatedBy());
+        if (recordDefinition.getFormConfigurations() == null
+                && existingRecordDefinition.getFormConfigurations() != null) {
+            recordDefinition.setFormConfigurations(existingRecordDefinition.getFormConfigurations());
+        }
+
+        recordDefinition.setCreatedTimestamp(
+                existingRecordDefinition.getCreatedTimestamp()
+        );
+
         recordDefinitionService.saveRecordDefinition(recordDefinition);
 
         RecordDefinition returnRecordDefinition =
@@ -728,6 +739,25 @@ public class AdminApiDelegateImpl implements AdminApiDelegate {
         return ResponseEntity.ok(
                 RecordDefinitionMapper.INSTANCE.recordDefinitionToResponseModel(
                         returnRecordDefinition));
+    }
+
+    @Override
+    public ResponseEntity<List<RecordDefinitionCountsModel>> getRecordDefinitionCounts(String recordDefinitionKey) {
+        if (!authorizationHandler.isAllowed(VIEW_CERBOS_ACTION, DASHBOARD_CONFIGURATION)) {
+            throw new ForbiddenException();
+        }
+
+        List<RecordDefinitionCountsModel> result =
+                dashboardConfigurationService
+                        .countTabsForRecordDefinition(recordDefinitionKey)
+                        .entrySet()
+                        .stream()
+                        .map(
+                                countEntry -> dashboardConfigurationMapper.mapRecordDefinitionCount(
+                                        countEntry.getKey(), countEntry.getValue()))
+                        .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(result);
     }
 
     @Override

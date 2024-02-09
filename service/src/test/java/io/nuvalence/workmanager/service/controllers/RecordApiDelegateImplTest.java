@@ -33,6 +33,7 @@ import io.nuvalence.workmanager.service.service.TransactionService;
 import io.nuvalence.workmanager.service.usermanagementapi.models.User;
 import io.nuvalence.workmanager.service.utils.auth.CurrentUserUtility;
 import io.nuvalence.workmanager.service.utils.testutils.StringDateUtils;
+import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -126,17 +127,23 @@ class RecordApiDelegateImplTest {
 
         final Transaction transaction = createTransaction(testUser);
 
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
+        final RecordCreationRequest request =
+                new RecordCreationRequest()
+                        .recordDefinitionKey("key")
+                        .transactionId(UUID.fromString(transaction.getId().toString()))
+                        .data(data)
+                        .externalId("123456789")
+                        .status("Active");
+
         Mockito.when(transactionService.getTransactionById(transaction.getId()))
                 .thenReturn(Optional.of(transaction));
 
         Record record = createRecord(recordDefinition, transaction, testUser);
 
-        Mockito.when(recordService.createRecord(recordDefinition, transaction)).thenReturn(record);
+        Mockito.when(recordService.createRecord(recordDefinition, transaction, request)).thenReturn(record);
 
-        final RecordCreationRequest request =
-                new RecordCreationRequest()
-                        .recordDefinitionKey("key")
-                        .transactionId(UUID.fromString(transaction.getId().toString()));
         final String postBody = new ObjectMapper().writeValueAsString(request);
 
         // Act and Assert
@@ -236,12 +243,18 @@ class RecordApiDelegateImplTest {
         Mockito.when(transactionService.getTransactionById(transaction.getId()))
                 .thenReturn(Optional.of(transaction));
 
-        Mockito.when(recordService.createRecord(recordDefinition, transaction))
-                .thenThrow(MissingSchemaException.class);
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
         final RecordCreationRequest request =
                 new RecordCreationRequest()
                         .recordDefinitionKey("key")
-                        .transactionId(UUID.fromString(transaction.getId().toString()));
+                        .transactionId(UUID.fromString(transaction.getId().toString()))
+                        .data(data)
+                        .externalId("123456789")
+                        .status("Active");
+
+        Mockito.when(recordService.createRecord(recordDefinition, transaction, request))
+                .thenThrow(MissingSchemaException.class);
         final String postBody = new ObjectMapper().writeValueAsString(request);
 
         // Act and Assert

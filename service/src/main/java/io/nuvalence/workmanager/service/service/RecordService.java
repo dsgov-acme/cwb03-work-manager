@@ -5,6 +5,7 @@ import io.nuvalence.workmanager.service.domain.dynamicschema.Schema;
 import io.nuvalence.workmanager.service.domain.record.Record;
 import io.nuvalence.workmanager.service.domain.record.RecordDefinition;
 import io.nuvalence.workmanager.service.domain.transaction.Transaction;
+import io.nuvalence.workmanager.service.generated.models.RecordCreationRequest;
 import io.nuvalence.workmanager.service.generated.models.RecordUpdateRequest;
 import io.nuvalence.workmanager.service.mapper.EntityMapper;
 import io.nuvalence.workmanager.service.mapper.MissingSchemaException;
@@ -37,13 +38,16 @@ public class RecordService {
     /**
      * Create a new Record for a given record definition.
      *
-     * @param definition Type of transaction to create
-     * @return The newly created transaction
-     * @throws MissingSchemaException if the transaction definition references a schema that does not exist
+     * @param definition Type of record to create
+     * @param transaction The transaction to create the record from
+     * @param request The data to populate the record with initially.
+     *
+     * @return The newly created record
+     * @throws MissingSchemaException if the record definition references a schema that does not exist
      */
-    public Record createRecord(RecordDefinition definition, Transaction transaction)
+    public Record createRecord(RecordDefinition definition, Transaction transaction, RecordCreationRequest request)
             throws MissingSchemaException {
-        return repository.save(factory.createRecord(definition, transaction));
+        return repository.save(factory.createRecord(definition, transaction, request));
     }
 
     public Optional<Record> getRecordById(final UUID id) {

@@ -104,7 +104,7 @@ public class RecordsApiDelegateImpl implements RecordsApiDelegate {
                                             new MissingTransactionException(
                                                     request.getTransactionId()));
 
-            final Record transactionRecord = recordService.createRecord(definition, transaction);
+            final Record transactionRecord = recordService.createRecord(definition, transaction, request);
 
             return ResponseEntity.ok(mapper.recordToRecordResponseModel(transactionRecord));
 
