@@ -7,6 +7,7 @@ import io.nuvalence.workmanager.service.ride.models.PromiseTimeResponse;
 import io.nuvalence.workmanager.service.ride.models.ReservationDetailsRequest;
 import io.nuvalence.workmanager.service.ride.models.ReservationDetailsResponse;
 import io.nuvalence.workmanager.service.ride.models.SubmitReservationRequest;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -111,7 +112,7 @@ public class MockRideRequestService implements RideRequestService {
 
     private String formatDate(Date date) {
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.getDefault());
         dateFormat.setTimeZone(timeZone);
         return dateFormat.format(date);
     }
