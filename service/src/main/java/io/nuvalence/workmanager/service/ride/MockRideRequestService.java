@@ -7,7 +7,6 @@ import io.nuvalence.workmanager.service.ride.models.PromiseTimeResponse;
 import io.nuvalence.workmanager.service.ride.models.ReservationDetailsRequest;
 import io.nuvalence.workmanager.service.ride.models.ReservationDetailsResponse;
 import io.nuvalence.workmanager.service.ride.models.SubmitReservationRequest;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -18,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
