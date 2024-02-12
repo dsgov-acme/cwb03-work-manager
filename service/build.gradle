@@ -47,6 +47,9 @@ dependencies {
 	implementation('org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-rest:7.20.0') {
 		exclude group: 'com.sun.xml.bind', module: 'jaxb-core'
 	}
+	implementation 'org.camunda.bpm:camunda-engine-plugin-connect:7.20.0'
+	implementation 'com.google.maps:google-maps-services:2.2.0'
+	implementation 'org.slf4j:slf4j-simple:1.7.25'
 
 	// This currently triggers a security vulnerability CVE-2022-31129 with the embedded web applications
 	// bundled version of moment.js. Leaving the web app starter out for now, we can revisit this situation if

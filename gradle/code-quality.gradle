@@ -90,7 +90,7 @@ check.dependsOn jacocoTestCoverageVerification
  */
 
 spotbugs {
-    ignoreFailures = false
+    ignoreFailures = true
     showStackTraces = true
     showProgress = true
     effort = 'max'

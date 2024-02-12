@@ -124,3 +124,7 @@ events:
     enabled: false
   publisher:
     topics: ${PUBLISHER_TOPICS}
+
+google:
+  geocoding:
+    auth: AIzaSyBmCR1B2gbpeyisOg_HR4l1Zjidk79Wxz8
