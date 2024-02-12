@@ -59,6 +59,7 @@ import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -126,17 +127,24 @@ class RecordApiDelegateImplTest {
 
         final Transaction transaction = createTransaction(testUser);
 
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
+        final RecordCreationRequest request =
+                new RecordCreationRequest()
+                        .recordDefinitionKey("key")
+                        .transactionId(UUID.fromString(transaction.getId().toString()))
+                        .data(data)
+                        .externalId("123456789")
+                        .status("Active");
+
         Mockito.when(transactionService.getTransactionById(transaction.getId()))
                 .thenReturn(Optional.of(transaction));
 
         Record record = createRecord(recordDefinition, transaction, testUser);
 
-        Mockito.when(recordService.createRecord(recordDefinition, transaction)).thenReturn(record);
+        Mockito.when(recordService.createRecord(recordDefinition, transaction, request))
+                .thenReturn(record);
 
-        final RecordCreationRequest request =
-                new RecordCreationRequest()
-                        .recordDefinitionKey("key")
-                        .transactionId(UUID.fromString(transaction.getId().toString()));
         final String postBody = new ObjectMapper().writeValueAsString(request);
 
         // Act and Assert
@@ -236,12 +244,18 @@ class RecordApiDelegateImplTest {
         Mockito.when(transactionService.getTransactionById(transaction.getId()))
                 .thenReturn(Optional.of(transaction));
 
-        Mockito.when(recordService.createRecord(recordDefinition, transaction))
-                .thenThrow(MissingSchemaException.class);
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
         final RecordCreationRequest request =
                 new RecordCreationRequest()
                         .recordDefinitionKey("key")
-                        .transactionId(UUID.fromString(transaction.getId().toString()));
+                        .transactionId(UUID.fromString(transaction.getId().toString()))
+                        .data(data)
+                        .externalId("123456789")
+                        .status("Active");
+
+        Mockito.when(recordService.createRecord(recordDefinition, transaction, request))
+                .thenThrow(MissingSchemaException.class);
         final String postBody = new ObjectMapper().writeValueAsString(request);
 
         // Act and Assert

@@ -21,11 +21,11 @@ public class Configuration {
      */
     public static void init(boolean isLocal) {
         if (isLocal) {
-            baseUri = "http://api.dsgov.test/wm";
-            gcpProjectId = "dsgov-dev";
-            issuer = "dsgov";
+            baseUri = "http://api.cwb03.test/wm";
+            gcpProjectId = "cwb03-dev-a1fe";
+            issuer = "cwb03";
             secretVersion = "latest";
-            tokenPrivateKeySecret = "dsgov-self-signed-token-private-key";
+            tokenPrivateKeySecret = "cwb03-self-signed-token-private-key";
         } else {
             baseUri = System.getenv("SERVICE_URI");
             gcpProjectId = System.getenv("GCP_PROJECT_ID");

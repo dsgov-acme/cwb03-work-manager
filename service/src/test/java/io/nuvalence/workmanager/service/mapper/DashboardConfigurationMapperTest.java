@@ -7,6 +7,7 @@ import io.nuvalence.workmanager.service.domain.transaction.DashboardConfiguratio
 import io.nuvalence.workmanager.service.domain.transaction.DashboardTabConfiguration;
 import io.nuvalence.workmanager.service.domain.transaction.DisplayFormat;
 import io.nuvalence.workmanager.service.domain.transaction.TransactionDefinitionSet;
+import io.nuvalence.workmanager.service.generated.models.RecordDefinitionCountsModel;
 import io.nuvalence.workmanager.service.generated.models.TransactionDefinitionSetDashboardResultModel;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -64,5 +65,16 @@ class DashboardConfigurationMapperTest {
         assertEquals(
                 dashboardConfiguration.getTabs().get(0).getTabLabel(),
                 result.getTabs().get(0).getTabLabel());
+    }
+
+    @Test
+    void testMapRecordDefinitionCount() {
+        RecordDefinitionCountsModel expected = new RecordDefinitionCountsModel();
+        expected.setTabLabel("one");
+        expected.setCount(1L);
+        RecordDefinitionCountsModel result = mapper.mapRecordDefinitionCount("one", 1L);
+
+        assertEquals(expected.getCount(), result.getCount());
+        assertEquals(expected.getTabLabel(), result.getTabLabel());
     }
 }

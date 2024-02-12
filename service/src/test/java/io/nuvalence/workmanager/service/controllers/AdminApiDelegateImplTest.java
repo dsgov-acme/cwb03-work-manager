@@ -1187,6 +1187,34 @@ class AdminApiDelegateImplTest {
     }
 
     @Test
+    void getRecordDefinitionCountsTest() throws Exception {
+        String recordDefinitionKey = "key";
+        Map<String, Long> counts = new HashMap<>();
+        counts.put("one", 1L);
+        counts.put("two", 2L);
+        when(dashboardConfigurationService.countTabsForRecordDefinition(recordDefinitionKey))
+                .thenReturn(counts);
+
+        mockMvc.perform(
+                        get("/api/v1/admin/records/" + recordDefinitionKey + "/counts")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[?(@.tabLabel == 'one')].count").value(1))
+                .andExpect(jsonPath("$[?(@.tabLabel == 'two')].count").value(2));
+    }
+
+    @Test
+    void getRecordDefinitionCounts_Unauthorized() throws Exception {
+        when(authorizationHandler.isAllowed("view", "dashboard_configuration")).thenReturn(false);
+
+        mockMvc.perform(
+                        get("/api/v1/admin/records/key/counts")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void postTransactionDefinition() throws Exception {
 
         FormConfiguration formConfig = createFormConfigurations().get(2);

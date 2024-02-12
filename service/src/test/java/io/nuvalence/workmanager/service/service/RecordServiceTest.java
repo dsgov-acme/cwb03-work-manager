@@ -16,6 +16,7 @@ import io.nuvalence.workmanager.service.domain.dynamicschema.Schema;
 import io.nuvalence.workmanager.service.domain.record.Record;
 import io.nuvalence.workmanager.service.domain.record.RecordDefinition;
 import io.nuvalence.workmanager.service.domain.transaction.Transaction;
+import io.nuvalence.workmanager.service.generated.models.RecordCreationRequest;
 import io.nuvalence.workmanager.service.generated.models.RecordUpdateRequest;
 import io.nuvalence.workmanager.service.mapper.EntityMapper;
 import io.nuvalence.workmanager.service.mapper.MissingSchemaException;
@@ -34,6 +35,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,17 +74,24 @@ class RecordServiceTest {
         RecordDefinition recordDefinition = new RecordDefinition();
         Transaction transaction = new Transaction();
         Record record = new Record();
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
+        RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
 
         // Mock behavior
-        when(recordFactory.createRecord(any(RecordDefinition.class), any(Transaction.class)))
+        when(recordFactory.createRecord(
+                        any(RecordDefinition.class),
+                        any(Transaction.class),
+                        any(RecordCreationRequest.class)))
                 .thenReturn(record);
         when(recordRepository.save(any(Record.class))).thenReturn(record);
 
         // Perform the test
-        Record result = recordService.createRecord(recordDefinition, transaction);
+        Record result = recordService.createRecord(recordDefinition, transaction, request);
 
         // Verify the interactions and assertions
-        verify(recordFactory, times(1)).createRecord(recordDefinition, transaction);
+        verify(recordFactory, times(1)).createRecord(recordDefinition, transaction, request);
         verify(recordRepository, times(1)).save(record);
         assertEquals(record, result);
     }

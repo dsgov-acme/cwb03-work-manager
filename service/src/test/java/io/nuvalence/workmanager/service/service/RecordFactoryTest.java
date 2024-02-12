@@ -1,9 +1,9 @@
 package io.nuvalence.workmanager.service.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
@@ -13,9 +13,11 @@ import io.nuvalence.workmanager.service.domain.record.Record;
 import io.nuvalence.workmanager.service.domain.record.RecordDefinition;
 import io.nuvalence.workmanager.service.domain.transaction.Transaction;
 import io.nuvalence.workmanager.service.domain.transaction.TransactionPriority;
+import io.nuvalence.workmanager.service.generated.models.RecordCreationRequest;
 import io.nuvalence.workmanager.service.mapper.EntityMapper;
 import io.nuvalence.workmanager.service.mapper.MissingSchemaException;
 import io.nuvalence.workmanager.service.repository.RecordRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +32,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,7 +56,7 @@ class RecordFactoryTest {
     @BeforeEach
     void setup() {
         clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-        factory = new RecordFactory(repository, schemaService);
+        factory = new RecordFactory(repository, schemaService, entityMapper);
         factory.setClock(clock);
         recordService = new RecordService(repository, factory, transactionService, entityMapper);
     }
@@ -64,13 +68,17 @@ class RecordFactoryTest {
         final Schema schema = mockSchema();
         final Transaction transaction =
                 createTransaction(definition.getId(), definition.getKey(), schema);
-        final Record record = createRecord(definition, transaction);
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
+        final RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
+        final Record record = createRecord(definition, transaction, request);
 
         // Mock the Authentication object to return null
         SecurityContextHolder.setContext(new SecurityContextImpl());
 
         // Act and Assert
-        assertEquals(record, factory.createRecord(definition, transaction));
+        assertEquals(record, factory.createRecord(definition, transaction, request));
     }
 
     @Test
@@ -80,17 +88,22 @@ class RecordFactoryTest {
         final Schema schema = mockSchema();
         final Transaction transaction =
                 createTransaction(definition.getId(), definition.getKey(), schema);
-        final Record record = createRecord(definition, transaction);
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
+        final RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
+        final Record record = createRecord(definition, transaction, request);
 
         Mockito.when(repository.save(any(Record.class))).thenReturn(record);
 
         // Act and Assert
-        Record createdRecord = recordService.createRecord(definition, transaction);
+        Record createdRecord = recordService.createRecord(definition, transaction, request);
 
         assertNotNull(createdRecord);
         assertEquals(definition.getId(), createdRecord.getRecordDefinition().getId());
         assertEquals(definition.getKey(), createdRecord.getRecordDefinitionKey());
-        assertTrue(createdRecord.getStatus().isEmpty());
+        assertEquals(createdRecord.getExternalId(), request.getExternalId());
+        assertFalse(createdRecord.getStatus().isEmpty());
 
         verify(repository).save(any(Record.class));
     }
@@ -102,13 +115,18 @@ class RecordFactoryTest {
         final Schema schema = mockSchema();
         final Transaction transaction =
                 createTransaction(definition.getId(), definition.getKey(), schema);
+        Map<String, Object> data = new HashMap<>();
+        data.put("one", 1);
+        final RecordCreationRequest request =
+                new RecordCreationRequest().data(data).externalId("123456789").status("Active");
         Mockito.lenient()
                 .when(schemaService.getSchemaByKey(definition.getSchemaKey()))
                 .thenReturn(Optional.empty());
 
         // Act and Assert
         assertThrows(
-                MissingSchemaException.class, () -> factory.createRecord(definition, transaction));
+                MissingSchemaException.class,
+                () -> factory.createRecord(definition, transaction, request));
     }
 
     private RecordDefinition createRecordDefinition() {
@@ -121,12 +139,18 @@ class RecordFactoryTest {
                 .build();
     }
 
-    private Record createRecord(RecordDefinition recordDefinition, Transaction transaction) {
+    private Record createRecord(
+            RecordDefinition recordDefinition,
+            Transaction transaction,
+            RecordCreationRequest request) {
         return Record.builder()
                 .recordDefinitionKey("key")
-                .externalId("y")
+                .externalId(
+                        StringUtils.isNotEmpty(request.getExternalId())
+                                ? request.getExternalId()
+                                : "y")
                 .recordDefinition(recordDefinition)
-                .status("")
+                .status(StringUtils.isNotEmpty(request.getStatus()) ? request.getStatus() : "")
                 .expires(OffsetDateTime.now(clock).plus(recordDefinition.getExpirationDuration()))
                 .createdTimestamp(OffsetDateTime.now(clock))
                 .createdFrom(transaction)

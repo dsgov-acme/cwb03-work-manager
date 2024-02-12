@@ -2,6 +2,7 @@ package io.nuvalence.workmanager.service.mapper;
 
 import io.nuvalence.workmanager.service.domain.transaction.DashboardConfiguration;
 import io.nuvalence.workmanager.service.generated.models.DashboardCountsModel;
+import io.nuvalence.workmanager.service.generated.models.RecordDefinitionCountsModel;
 import io.nuvalence.workmanager.service.generated.models.TransactionDefinitionSetDashboardResultModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -33,5 +34,20 @@ public interface DashboardConfigurationMapper {
         dashboardCountsModel.setTabLabel(label);
         dashboardCountsModel.setCount(count);
         return dashboardCountsModel;
+    }
+
+    /**
+     * Maps a count to a record definition count model.
+     *
+     * @param label label for the count.
+     * @param count count.
+     *
+     * @return record definition count model.
+     */
+    default RecordDefinitionCountsModel mapRecordDefinitionCount(String label, Long count) {
+        RecordDefinitionCountsModel recordDefinitionCountsModel = new RecordDefinitionCountsModel();
+        recordDefinitionCountsModel.setTabLabel(label);
+        recordDefinitionCountsModel.setCount(count);
+        return recordDefinitionCountsModel;
     }
 }
