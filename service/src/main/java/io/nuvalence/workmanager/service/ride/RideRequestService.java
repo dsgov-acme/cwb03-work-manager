@@ -24,8 +24,9 @@ public interface RideRequestService {
      * Submits the reservation request.
      *
      * @param request the request
+     * @return ReservationDetailsResponse
      */
-    void submitReservation(SubmitReservationRequest request);
+    Optional<ReservationDetailsResponse> submitReservation(SubmitReservationRequest request);
 
     /**
      * Retrieves the reservation details.

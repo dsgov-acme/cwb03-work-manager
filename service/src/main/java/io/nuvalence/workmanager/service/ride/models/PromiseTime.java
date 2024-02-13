@@ -11,6 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class PromiseTime {
     private String id;
-    private String pickUpTimeUTC;
-    private String dropOffTimeUTC;
+    private long pickupTime;
+    private long dropTime;
+    private String route;
 }

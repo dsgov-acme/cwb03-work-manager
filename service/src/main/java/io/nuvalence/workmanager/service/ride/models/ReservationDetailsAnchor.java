@@ -9,6 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @ToString
 @Jacksonized
-public class SubmitReservationRequest {
-    private String id; // promise time id
+public class ReservationDetailsAnchor {
+    private String placeId;
+    private long promisedTime;
 }

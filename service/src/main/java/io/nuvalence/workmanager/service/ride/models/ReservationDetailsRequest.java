@@ -11,5 +11,4 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class ReservationDetailsRequest {
     private String reservationId;
-    private String promiseTimeId;
 }

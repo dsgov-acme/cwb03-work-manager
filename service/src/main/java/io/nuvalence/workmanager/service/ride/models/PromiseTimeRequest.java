@@ -11,7 +11,8 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class PromiseTimeRequest {
     private String riderId;
-    private GeocodedLocation pickLocation;
-    private GeocodedLocation dropLocation;
-    private RiderRestrictions riderRestrictions;
+    private String pickupPlaceId;
+    private String dropPlaceId;
+    private AnchorType anchor;
+    private PassengerAccommodations passengerAccommodations;
 }
