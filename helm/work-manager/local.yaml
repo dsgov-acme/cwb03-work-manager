@@ -2,7 +2,7 @@ environment: "local"
 createIngress: true
 
 postgres:
-  enabled: false
+  enabled: true
   persistence:
     size: 1Gi
   env:
