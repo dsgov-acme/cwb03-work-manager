@@ -10,8 +10,11 @@ import lombok.extern.jackson.Jacksonized;
 @ToString
 @Jacksonized
 public class ReservationDetailsResponse {
-    private String reservationId;
-    private String routeId;
-    private GeocodedLocation startLocation;
-    private GeocodedLocation endLocation;
+    private String id;
+    private AnchorType anchor;
+    private long requestTime;
+    private ReservationDetailsAnchor pickup;
+    private ReservationDetailsAnchor dropOff;
+    private PassengerAccommodations passengerAccommodations;
+    private String route;
 }

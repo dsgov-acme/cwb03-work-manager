@@ -10,6 +10,6 @@ import lombok.extern.jackson.Jacksonized;
 @ToString
 @Jacksonized
 public class PromiseTimeResponse {
-    private String reservationId;
-    private PromiseTime[] promiseTimes;
+    private AnchorType anchor;
+    private PromiseTime[] promises;
 }
