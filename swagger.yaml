@@ -1844,6 +1844,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecordResponseModel'
+  /ride-request/promise-times:
+    post:
+      summary: Retrieve Promise Times for Ride Requests
+      operationId: getPromiseTimes
+      tags: [ 'Rides', 'PromiseTimes' ]
+      requestBody:
+        description: The request for promise times including desired anchor time.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromiseTimeRequest'
+      responses:
+        '200':
+          description: The list of promise times requested.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromiseTimeResponse'
+  /ride-request/submit:
+    post:
+      summary: Submit Ride Reservation
+      operationId: submitReservation
+      tags: [ 'Rides', 'PromiseTimes' ]
+      requestBody:
+        description: The selected promise time and ride confirmation.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitReservationRequest'
+      responses:
+        '200':
+          description: The confirmed reservation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDetailsResponse'
+  /ride-request/details:
+    post:
+      summary: Retrieve Reservation Details
+      operationId: getReservationDetails
+      tags: [ 'Rides', 'PromiseTimes' ]
+      requestBody:
+        description: The reservation request.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationDetailsRequest'
+      responses:
+        '200':
+          description: The details of the reservation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDetailsResponse'
   /employer-profiles:
     post:
       summary: Create a new employer profile.
@@ -3997,6 +4054,127 @@ components:
           type: array
           items:
             type: string
+    PromiseTimeRequest:
+      type: object
+      required:
+        - riderId
+        - pickupPlaceId
+        - dropPlaceId
+        - anchor
+        - passengerAccommodations
+      properties:
+        riderId:
+          type: string
+        pickupPlaceId:
+          type: string
+        dropPlaceId:
+          type: string
+        anchor:
+          $ref: '#/components/schemas/AnchorType'
+        passengerAccommodations:
+          $ref: '#/components/schemas/PassengerAccommodations'
+    PassengerAccommodations:
+      type: object
+      required:
+        - ambulatorySeats
+        - wheelchairSeats
+        - companions
+      properties:
+        ambulatorySeats:
+          type: integer
+          format: int32
+        wheelchairSeats:
+          type: integer
+          format: int32
+        companions:
+          type: integer
+          format: int32
+    PromiseTimeResponse:
+      type: object
+      required:
+        - anchor
+        - promises
+      properties:
+        anchor:
+          $ref: '#/components/schemas/AnchorType'
+        promises:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromiseTime'
+    AnchorType:
+      type: string
+      enum:
+        - DROPOFF
+        - PICKUP
+    PromiseTime:
+      type: object
+      required:
+        - id
+        - pickupTime
+        - dropTime
+        - route
+      properties:
+        id:
+          type: string
+        pickupTime:
+          type: integer
+          format: int64
+        dropTime:
+          type: integer
+          format: int64
+        route:
+          type: string
+    SubmitReservationRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+    ReservationDetailsResponse:
+      type: object
+      required:
+        - id
+        - anchor
+        - requestTime
+        - pickup
+        - dropOff
+        - passengerAccommodations
+        - route
+      properties:
+        id:
+          type: string
+        anchor:
+          $ref: '#/components/schemas/AnchorType'
+        requestTime:
+          type: integer
+          format: int64
+        pickup:
+          $ref: '#/components/schemas/ReservationDetailsAnchor'
+        dropOff:
+          $ref: '#/components/schemas/ReservationDetailsAnchor'
+        passengerAccommodations:
+          $ref: '#/components/schemas/PassengerAccommodations'
+        route:
+          type: string
+    ReservationDetailsAnchor:
+      type: object
+      required:
+        - placeId
+        - promisedTime
+      properties:
+        placeId:
+          type: string
+        promisedTime:
+          type: integer
+          format: int64
+    ReservationDetailsRequest:
+      type: object
+      required:
+        - reservationId
+      properties:
+        reservationId:
+          type: string
     RecordCreationRequest:
       type: object
       required:
