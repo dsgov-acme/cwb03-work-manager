@@ -3,7 +3,7 @@ package io.nuvalence.workmanager.service.service;
 import io.nuvalence.workmanager.service.domain.dynamicschema.DynamicEntity;
 import io.nuvalence.workmanager.service.domain.transaction.Transaction;
 import io.nuvalence.workmanager.service.models.CommonAddress;
-import io.nuvalence.workmanager.service.models.MTALocation;
+import io.nuvalence.workmanager.service.ride.models.MTALocation;
 import io.nuvalence.workmanager.service.utils.camunda.CamundaPropertiesUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +65,7 @@ public class MTALocationTransactionStatusUpdateDelegate implements JavaDelegate 
 
         MTALocation location = geocodingService.geocodeLocation(address);
 
-        transactionEntity.set("latitude", location.getLatitude());
-        transactionEntity.set("longitude", location.getLongitude());
+//        transactionEntity.set("latitude", location.getLatitude());
+//        transactionEntity.set("longitude", location.getLongitude());
     }
 }

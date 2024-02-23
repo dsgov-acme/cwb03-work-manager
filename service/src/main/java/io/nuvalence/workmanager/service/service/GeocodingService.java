@@ -7,7 +7,7 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
 import io.nuvalence.workmanager.service.models.CommonAddress;
-import io.nuvalence.workmanager.service.models.MTALocation;
+import io.nuvalence.workmanager.service.ride.models.MTALocation;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,8 +55,8 @@ public class GeocodingService {
             log.debug("Geocoded address {} to result {}", address, result);
 
             return MTALocation.builder()
-                    .latitude(results[0].geometry.location.lat)
-                    .longitude(results[0].geometry.location.lng)
+//                    .latitude(results[0].geometry.location.lat)
+//                    .longitude(results[0].geometry.location.lng)
                     .address(address)
                     .build();
         } catch (ApiException e) {
@@ -71,8 +71,8 @@ public class GeocodingService {
     private String extractAddress(CommonAddress address) {
         return String.format(
                 ADDRESS_FORMAT,
-                (address.getAddress1()
-                        + Optional.ofNullable(address.getAddress2())
+                (address.getAddressLine1()
+                        + Optional.ofNullable(address.getAddressLine2())
                                 .map(a2 -> " " + a2)
                                 .orElse("")),
                 address.getCity(),

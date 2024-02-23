@@ -1901,6 +1901,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReservationDetailsResponse'
+  /saved-locations:
+    get:
+      summary: Retrieve Saved Locations for a Rider
+      operationId: getSavedLocations
+      tags: [ 'Rides', 'PromiseTimes' ]
+      parameters:
+        - name: riderId
+          in: query
+          description: ID of the rider
+          required: false
+          schema:
+            type: string
+        - name: userId
+          in: query
+          description: ID of the user
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MTALocation'
   /employer-profiles:
     post:
       summary: Create a new employer profile.
@@ -4174,6 +4201,43 @@ components:
         - reservationId
       properties:
         reservationId:
+          type: string
+    MTALocation:
+      type: object
+      properties:
+        id:
+          type: string
+        placeId:
+          type: string
+        name:
+          type: string
+        riderId:
+          type: string
+        locationType:
+          $ref: '#/components/schemas/MTALocationType'
+        address:
+          $ref: '#/components/schemas/CommonAddress'
+    MTALocationType:
+      type: string
+      enum:
+        - CUSTOM_LOCATION
+        - SAVED_LOCATION
+    CommonAddress:
+      type: object
+      properties:
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        stateCode:
+          type: string
+        postalCode:
+          type: string
+        postalCodeExtension:
+          type: string
+        countryCode:
           type: string
     RecordCreationRequest:
       type: object

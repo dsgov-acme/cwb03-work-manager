@@ -56,6 +56,10 @@ public class Record implements DynamicEntityContainer, UpdateTrackedEntity {
     @Column(name = "external_id")
     private String externalId;
 
+    @Setter
+    @Column(name = "subject_user_id")
+    private String subjectUserId;
+
     @Column(name = "record_definition_key", nullable = false)
     private String recordDefinitionKey;
 
