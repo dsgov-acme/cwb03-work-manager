@@ -1,13 +1,17 @@
 package io.nuvalence.workmanager.service.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommonAddress {
-    private String address1;
-    private String address2;
+    private String addressLine1;
+    private String addressLine2;
     private String city;
     private String stateCode;
     private String postalCode;

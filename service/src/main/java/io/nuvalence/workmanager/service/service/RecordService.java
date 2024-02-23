@@ -55,6 +55,10 @@ public class RecordService {
         return repository.findById(id);
     }
 
+    public Optional<Record> getRecordBySubjectUserId(final String subjectUserId) {
+        return Optional.ofNullable(repository.findBySubjectUserId(subjectUserId));
+    }
+
     public Page<Record> getRecordsByFilters(RecordFilters filter) {
 
         return repository.findAll(filter.getRecordSpecification(), filter.getPageRequest());

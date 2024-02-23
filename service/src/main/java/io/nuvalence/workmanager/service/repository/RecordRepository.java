@@ -28,4 +28,6 @@ public interface RecordRepository
             "SELECT r.status, COUNT(r) FROM Record r WHERE r.recordDefinitionKey = ?1 GROUP BY"
                     + " r.status")
     List<Object[]> getStatusCountByRecordDefinitionKey(String recordDefinitionKey);
+
+    Record findBySubjectUserId(String subjectUserId);
 }
