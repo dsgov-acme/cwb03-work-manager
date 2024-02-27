@@ -29,7 +29,8 @@ public class RideConfirmationDelegate implements JavaDelegate {
             log.warn("RideConfirmationDelegate - transactionId not found");
             return;
         }
-        Optional<Transaction> transactionOptional = transactionService.getTransactionById(transactionId);
+        Optional<Transaction> transactionOptional =
+                transactionService.getTransactionById(transactionId);
 
         if (transactionOptional.isEmpty()) {
             log.warn("RideConfirmationDelegate - no transaction with id {} found", transactionId);
@@ -40,14 +41,16 @@ public class RideConfirmationDelegate implements JavaDelegate {
         transaction.setProcessInstanceId(execution.getProcessInstanceId());
         transaction.setStatus(CONFIRMED_STATUS);
 
-
-
-        log.info("RideConfirmationDelegate - Confirming Ride {} for rider {}", transactionId, transaction.getExternalId());
+        log.info(
+                "RideConfirmationDelegate - Confirming Ride {} for rider {}",
+                transactionId,
+                transaction.getExternalId());
 
         // confirm the ride in partner API
-        rideService.submitReservation(SubmitReservationRequest.builder()
-                .id(transaction.getData().getProperty("promiseTimeId", String.class))
-                .build());
+        rideService.submitReservation(
+                SubmitReservationRequest.builder()
+                        .id(transaction.getData().getProperty("promiseTimeId", String.class))
+                        .build());
 
         transactionService.updateTransaction(transaction);
     }

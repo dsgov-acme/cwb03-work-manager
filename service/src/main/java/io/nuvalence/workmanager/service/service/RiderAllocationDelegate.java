@@ -27,7 +27,8 @@ public class RiderAllocationDelegate implements JavaDelegate {
             log.warn("RiderAllocationDelegate - transactionId not found");
             return;
         }
-        Optional<Transaction> transactionOptional = transactionService.getTransactionById(transactionId);
+        Optional<Transaction> transactionOptional =
+                transactionService.getTransactionById(transactionId);
 
         if (transactionOptional.isEmpty()) {
             log.warn("RiderAllocationDelegate - no transaction with id {} found", transactionId);
@@ -37,14 +38,18 @@ public class RiderAllocationDelegate implements JavaDelegate {
         Transaction transaction = transactionOptional.get();
         transaction.setProcessInstanceId(execution.getProcessInstanceId());
 
-        String riderId = Optional.ofNullable(transaction.getSubjectUserId())
-                .map(recordService::getRecordBySubjectUserId)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(Record::getExternalId)
-                .orElse(null);
+        String riderId =
+                Optional.ofNullable(transaction.getSubjectUserId())
+                        .map(recordService::getRecordBySubjectUserId)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .map(Record::getExternalId)
+                        .orElse(null);
 
-        log.info("RiderAllocationDelegate - Assigning riderId {} to transaction {}", riderId, transactionId);
+        log.info(
+                "RiderAllocationDelegate - Assigning riderId {} to transaction {}",
+                riderId,
+                transactionId);
 
         transaction.setExternalId(riderId);
 

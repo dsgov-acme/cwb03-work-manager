@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -24,18 +23,18 @@ public class SavedLocationServiceImpl implements SavedLocationService {
 
     @Override
     public List<MTALocation> getSavedLocationsByRiderId(String riderId) {
-        List<Transaction> transactions = transactionRepository.findByTransactionDefinitionKeyAndExternalIdAndStatus(SAVED_LOCATION_KEY, riderId, SAVED_LOCATION_STATUS);
-        return transactions.stream()
-                .map(this::convertToMTALocation)
-                .collect(Collectors.toList());
+        List<Transaction> transactions =
+                transactionRepository.findByTransactionDefinitionKeyAndExternalIdAndStatus(
+                        SAVED_LOCATION_KEY, riderId, SAVED_LOCATION_STATUS);
+        return transactions.stream().map(this::convertToMTALocation).collect(Collectors.toList());
     }
 
     @Override
     public List<MTALocation> getSavedLocationsByUserId(String userId) {
-        List<Transaction> transactions = transactionRepository.findByTransactionDefinitionKeyAndSubjectUserIdAndStatus(SAVED_LOCATION_KEY, userId, SAVED_LOCATION_STATUS);
-        return transactions.stream()
-                .map(this::convertToMTALocation)
-                .collect(Collectors.toList());
+        List<Transaction> transactions =
+                transactionRepository.findByTransactionDefinitionKeyAndSubjectUserIdAndStatus(
+                        SAVED_LOCATION_KEY, userId, SAVED_LOCATION_STATUS);
+        return transactions.stream().map(this::convertToMTALocation).collect(Collectors.toList());
     }
 
     private MTALocation convertToMTALocation(Transaction transaction) {
@@ -45,14 +44,16 @@ public class SavedLocationServiceImpl implements SavedLocationService {
         String placeId = dynamicEntity.getProperty("placeId", String.class);
         String name = dynamicEntity.getProperty("name", String.class);
         String riderId = dynamicEntity.getProperty("riderId", String.class);
-        MTALocationType locationType = dynamicEntity.getProperty("locationType", MTALocationType.class);
+        MTALocationType locationType =
+                dynamicEntity.getProperty("locationType", MTALocationType.class);
 
         String address1 = dynamicEntity.getProperty("address.addressLine1", String.class);
         String address2 = dynamicEntity.getProperty("address.addressLine2", String.class);
         String city = dynamicEntity.getProperty("address.city", String.class);
         String stateCode = dynamicEntity.getProperty("address.stateCode", String.class);
         String postalCode = dynamicEntity.getProperty("address.postalCode", String.class);
-        String postalCodeExtension = dynamicEntity.getProperty("address.postalCodeExtension", String.class);
+        String postalCodeExtension =
+                dynamicEntity.getProperty("address.postalCodeExtension", String.class);
         String countryCode = dynamicEntity.getProperty("address.countryCode", String.class);
 
         MTALocation location = new MTALocation();
@@ -76,6 +77,4 @@ public class SavedLocationServiceImpl implements SavedLocationService {
 
         return location;
     }
-
-
 }

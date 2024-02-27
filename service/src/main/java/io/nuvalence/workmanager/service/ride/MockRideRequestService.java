@@ -34,7 +34,8 @@ public class MockRideRequestService implements RideRequestService {
     @Override
     public Optional<PromiseTimeResponse> getPromiseTimes(PromiseTimeRequest request) {
         // TODO: if the request contains placeIds, they can be used to retrieve the promise times.
-        // if the request contains UUIDs, e.g. IDs of saved locations, we should look up the placeId of the saved location first.
+        // if the request contains UUIDs, e.g. IDs of saved locations, we should look up the placeId
+        // of the saved location first.
         return Optional.ofNullable(
                 PromiseTimeResponse.builder()
                         .anchor(AnchorType.DROPOFF)
