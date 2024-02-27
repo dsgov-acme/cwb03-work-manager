@@ -13,8 +13,8 @@ public abstract class SavedLocationMapper {
 
     @Setter protected EntityMapper entityMapper;
 
-    public abstract io.nuvalence.workmanager.service.ride.models.MTALocation toEntity(MTALocation dto);
+    public abstract io.nuvalence.workmanager.service.ride.models.MTALocation toEntity(
+            MTALocation dto);
 
     public abstract MTALocation toDto(io.nuvalence.workmanager.service.ride.models.MTALocation dto);
-
 }

@@ -55,7 +55,6 @@ public interface TransactionRepository
     List<Transaction> findByTransactionDefinitionKeyAndExternalIdAndStatus(
             String transactionDefinitionKey, String externalId, String status);
 
-
     List<Transaction> findByTransactionDefinitionKeyAndSubjectUserIdAndStatus(
             String transactionDefinitionKey, String subjectUserId, String status);
 }

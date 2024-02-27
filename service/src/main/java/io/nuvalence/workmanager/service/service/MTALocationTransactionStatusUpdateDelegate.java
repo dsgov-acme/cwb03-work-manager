@@ -65,7 +65,7 @@ public class MTALocationTransactionStatusUpdateDelegate implements JavaDelegate 
 
         MTALocation location = geocodingService.geocodeLocation(address);
 
-//        transactionEntity.set("latitude", location.getLatitude());
-//        transactionEntity.set("longitude", location.getLongitude());
+        //        transactionEntity.set("latitude", location.getLatitude());
+        //        transactionEntity.set("longitude", location.getLongitude());
     }
 }

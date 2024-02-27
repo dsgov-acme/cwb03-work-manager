@@ -55,8 +55,8 @@ public class GeocodingService {
             log.debug("Geocoded address {} to result {}", address, result);
 
             return MTALocation.builder()
-//                    .latitude(results[0].geometry.location.lat)
-//                    .longitude(results[0].geometry.location.lng)
+                    //                    .latitude(results[0].geometry.location.lat)
+                    //                    .longitude(results[0].geometry.location.lng)
                     .address(address)
                     .build();
         } catch (ApiException e) {

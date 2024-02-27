@@ -17,14 +17,18 @@ public abstract class RideRequestMapper {
 
     @Setter protected EntityMapper entityMapper;
 
+    public abstract io.nuvalence.workmanager.service.ride.models.ReservationDetailsRequest toEntity(
+            ReservationDetailsRequest dto);
 
-    public abstract io.nuvalence.workmanager.service.ride.models.ReservationDetailsRequest toEntity(ReservationDetailsRequest dto);
+    public abstract io.nuvalence.workmanager.service.ride.models.SubmitReservationRequest toEntity(
+            SubmitReservationRequest dto);
 
-    public abstract io.nuvalence.workmanager.service.ride.models.SubmitReservationRequest toEntity(SubmitReservationRequest dto);
+    public abstract io.nuvalence.workmanager.service.ride.models.PromiseTimeRequest toEntity(
+            PromiseTimeRequest dto);
 
-    public abstract io.nuvalence.workmanager.service.ride.models.PromiseTimeRequest toEntity(PromiseTimeRequest dto);
+    public abstract io.nuvalence.workmanager.service.generated.models.ReservationDetailsResponse
+            toDto(ReservationDetailsResponse entity);
 
-    public abstract io.nuvalence.workmanager.service.generated.models.ReservationDetailsResponse toDto(ReservationDetailsResponse entity);
-
-    public abstract io.nuvalence.workmanager.service.generated.models.PromiseTimeResponse toDto(PromiseTimeResponse entity);
+    public abstract io.nuvalence.workmanager.service.generated.models.PromiseTimeResponse toDto(
+            PromiseTimeResponse entity);
 }

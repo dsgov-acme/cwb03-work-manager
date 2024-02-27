@@ -35,7 +35,6 @@ public class SavedLocationApiDelegateImpl implements SavedLocationsApiDelegate {
                     .stream()
                     .map(savedLocationMapper::toDto)
                     .collect(Collectors.collectingAndThen(Collectors.toList(), ResponseEntity::ok));
-
         }
 
         // query by rider id
@@ -45,6 +44,5 @@ public class SavedLocationApiDelegateImpl implements SavedLocationsApiDelegate {
                 .stream()
                 .map(savedLocationMapper::toDto)
                 .collect(Collectors.collectingAndThen(Collectors.toList(), ResponseEntity::ok));
-   }
-
+    }
 }
