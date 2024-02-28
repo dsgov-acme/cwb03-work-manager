@@ -10,6 +10,7 @@ import io.nuvalence.auth.token.firebase.FirebaseAuthenticationProvider;
 import io.nuvalence.auth.util.RsaKeyUtility;
 import io.nuvalence.logging.filter.LoggingContextFilter;
 import io.nuvalence.workmanager.service.camunda.auth.CamundaPermissionFilter;
+import io.nuvalence.workmanager.service.config.dfcx.DialogflowAuthenticationProvider;
 import io.nuvalence.workmanager.service.utils.JacocoIgnoreInGeneratedReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -122,14 +123,14 @@ public class WebSecurityConfig {
                                         RsaKeyUtility.getPublicKeyFromString(selfSignPublicKey),
                                         NAMESPACE)),
                         LoggingContextFilter.class)
-//                .addFilterAfter(
-//                        new BasicAuthFilter(NAMESPACE,
-//                                new DialogflowAuthenticationProvider(NAMESPACE)
-//                        ), TokenFilter.class
-//                )
                 .addFilterAfter(
                         new CamundaPermissionFilter(
                                 authorizationHandler, NAMESPACE, "/engine-rest/**"), TokenFilter.class)
+                .addFilterAfter(
+                        new BasicAuthFilter(NAMESPACE,
+                                new DialogflowAuthenticationProvider(NAMESPACE)
+                        ), CamundaPermissionFilter.class
+                )
                 .build();
 
     }
