@@ -419,7 +419,7 @@ class RecordApiDelegateImplTest {
                         createRecordDefinition(), createTransaction(createUser()), createUser());
 
         final RecordFilters filters =
-                new RecordFilters(null, null, "externalId", null, "ASC", 0, 2);
+                new RecordFilters(null, null, "externalId", false, null, "ASC", 0, 2);
 
         final Page<Record> pagedResults = new PageImpl<>(List.of(record));
 

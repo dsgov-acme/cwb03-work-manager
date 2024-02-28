@@ -21,6 +21,7 @@ public class RecordFilters extends BaseFilters {
     private String recordDefinitionKey;
     private List<String> status;
     private String externalId;
+    private Boolean externalIdEquality;
 
     /**
      * Constructor.
@@ -28,15 +29,18 @@ public class RecordFilters extends BaseFilters {
      * @param recordDefinitionKey the record definition key
      * @param status the status
      * @param externalId the external id
+     * @param externalIdEquality if true, will do an equals match instead of contains
      * @param sortBy the sort by
      * @param sortOrder the sort order
      * @param pageNumber the page number
      * @param pageSize the page size
+     *
      */
     public RecordFilters(
             String recordDefinitionKey,
             List<String> status,
             String externalId,
+            Boolean externalIdEquality,
             String sortBy,
             String sortOrder,
             Integer pageNumber,
@@ -45,6 +49,7 @@ public class RecordFilters extends BaseFilters {
         this.recordDefinitionKey = recordDefinitionKey;
         this.status = status;
         this.externalId = externalId;
+        this.externalIdEquality = externalIdEquality;
     }
 
     /**
@@ -64,10 +69,19 @@ public class RecordFilters extends BaseFilters {
             }
 
             if (StringUtils.isNotBlank(this.externalId)) {
-                predicates.add(
-                        criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("externalId")),
-                                "%" + this.externalId.toLowerCase(Locale.ROOT) + "%"));
+                if (this.externalIdEquality) {
+                    predicates.add(
+                            criteriaBuilder.equal(
+                                    criteriaBuilder.lower(root.get("externalId")),
+                                    this.externalId.toLowerCase(Locale.ROOT)
+                            )
+                    );
+                } else {
+                    predicates.add(
+                            criteriaBuilder.like(
+                                    criteriaBuilder.lower(root.get("externalId")),
+                                    "%" + this.externalId.toLowerCase(Locale.ROOT) + "%"));
+                }
             }
 
             if (status != null && !status.isEmpty()) {

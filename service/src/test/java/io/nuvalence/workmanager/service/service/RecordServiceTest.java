@@ -117,7 +117,7 @@ class RecordServiceTest {
     void testGetRecordsByFilters() {
         // Mock data
         final RecordFilters filters =
-                new RecordFilters(null, null, "externalId", "createdTimestamp", "ASC", 0, 2);
+                new RecordFilters(null, null, "externalId", false, "createdTimestamp", "ASC", 0, 2);
         Page<Record> recordPage = mock(Page.class);
 
         // Mock behavior

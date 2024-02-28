@@ -52,7 +52,7 @@ class RecordFiltersTest {
     @Test
     void testRecordSpecificationWithRecordDefinitionKey() {
         // Given
-        recordFilters = new RecordFilters("KEY", null, null, null, null, null, null);
+        recordFilters = new RecordFilters("KEY", null, null, false, null, null, null, null);
         Predicate firstPredicate = mock(Predicate.class);
         Predicate finalPredicate = mock(Predicate.class);
 
@@ -78,7 +78,7 @@ class RecordFiltersTest {
     @Test
     void testRecordSpecificationWithExternalId() {
         // Given
-        recordFilters = new RecordFilters(null, null, "EXTID", null, null, null, null);
+        recordFilters = new RecordFilters(null, null, "EXTID", false, null, null, null, null);
         Predicate firstPredicate = mock(Predicate.class);
         Predicate finalPredicate = mock(Predicate.class);
 
@@ -105,7 +105,7 @@ class RecordFiltersTest {
     void testRecordSpecificationWithStatus() {
         // Given
         List<String> statusList = Arrays.asList("status1", "status2");
-        recordFilters = new RecordFilters(null, statusList, null, null, null, null, null);
+        recordFilters = new RecordFilters(null, statusList, null, false, null, null, null, null);
         Predicate firstPredicate = mock(Predicate.class);
         Predicate finalPredicate = mock(Predicate.class);
 
@@ -131,7 +131,7 @@ class RecordFiltersTest {
     void testRecordSpecificationWithExternalIdAndStatus() {
         // Given
         List<String> statusList = Arrays.asList("status1", "status2");
-        recordFilters = new RecordFilters(null, statusList, "EXTID", null, null, null, null);
+        recordFilters = new RecordFilters(null, statusList, "EXTID", false, null, null, null, null);
         Predicate externalIdPredicate = mock(Predicate.class);
         Predicate statusPredicate = mock(Predicate.class);
         Predicate finalPredicate = mock(Predicate.class);
@@ -164,7 +164,7 @@ class RecordFiltersTest {
     @Test
     void testRecordSpecificationWithNullValues() {
         // Given
-        recordFilters = new RecordFilters(null, null, null, null, null, null, null);
+        recordFilters = new RecordFilters(null, null, null, false, null, null, null, null);
 
         // Execute
         Specification<Record> specification = recordFilters.getRecordSpecification();

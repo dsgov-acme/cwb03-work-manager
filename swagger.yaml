@@ -22,6 +22,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TransactionDefinitionSetDashboardResultModel'
+  /rider/validate:
+    post:
+      summary: Validates that a rider with the provided Rider ID exists.
+      operationId: validateRiderWebhook.
+      tags: [ 'Rider' ]
+      requestBody:
+        description: The webhook request body.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DialogflowWebhookRequest'
+      responses:
+        '200':
+          description: Successfully found a rider with the provided rider id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DialogflowWebhookResponse'
   /admin/dashboard-order:
     get:
       summary: Get dashboard order.
@@ -4453,6 +4472,152 @@ components:
         lastUpdatedTimestamp:
           type: string
           format: date-time
+    DialogflowWebhookRequest:
+      type: object
+      properties:
+        detectIntentResponseId:
+          type: string
+        languageCode:
+          type: string
+        fulfillmentInfo:
+          $ref: '#/components/schemas/DialogflowFulfillmentInfo'
+        intentInfo:
+          $ref: '#/components/schemas/DialogflowIntentInfo'
+        pageInfo:
+          $ref: '#/components/schemas/DialogflowPageInfo'
+        sessionInfo:
+          $ref: '#/components/schemas/DialogflowSessionInfo'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DialogflowResponseMessage'
+        payload:
+          type: object
+        sentimentAnalysisResult:
+          $ref: '#/components/schemas/DialogflowSentimentAnalysisResult'
+        text:
+          type: string
+        triggerIntent:
+          type: string
+        transcript:
+          type: string
+        dtmfDigits:
+          type: string
+    DialogflowFulfillmentInfo:
+      type: object
+      properties:
+        tag:
+          type: string
+    DialogflowIntentInfo:
+      type: object
+      properties:
+        lastMatchedIntent:
+          type: string
+        displayName:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: true
+        confidence:
+          type: number
+    DialogflowPageInfo:
+      type: object
+      properties:
+        currentPage:
+          type: string
+        displayName:
+          type: string
+        formInfo:
+          $ref: '#/components/schemas/DialogflowFormInfo'
+    DialogflowFormInfo:
+      type: object
+      properties:
+        parameterInfo:
+          $ref: '#/components/schemas/DialogflowParameterInfo'
+    DialogflowParameterInfo:
+      type: object
+      properties:
+        displayName:
+          type: string
+        required:
+          type: boolean
+        status:
+          type: string
+          enum:
+            - PARAMETER_STATE_UNSPECIFIED
+            - EMPTY
+            - INVALID
+            - FILLED
+        value:
+          type: object
+        justCollected:
+          type: boolean
+    DialogflowSessionInfo:
+      type: object
+      properties:
+        session:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: true
+    DialogflowResponseMessage:
+      type: object
+      properties:
+        responseType:
+          type: string
+          enum:
+            - RESPONSE_TYPE_UNSPECIFIED
+            - ENTRY_PROMPT
+            - PARAMETER_PROMPT
+            - HANDLER_PROMPT
+        channel:
+          type: string
+        text:
+          $ref: '#/components/schemas/DialogflowText'
+    DialogflowText:
+      type: object
+      properties:
+        text:
+          type: array
+          items:
+            type: string
+        allowPlaybackInterruption:
+          type: boolean
+    DialogflowWebhookResponse:
+      type: object
+      properties:
+        fulfillmentResponse:
+          $ref: '#/components/schemas/DialogflowFulfillmentResponse'
+        pageInfo:
+          $ref: '#/components/schemas/DialogflowPageInfo'
+        sessionInfo:
+          $ref: '#/components/schemas/DialogflowSessionInfo'
+        payload:
+          type: object
+        targetPage:
+          type: string
+        targetFlow:
+          type: string
+    DialogflowFulfillmentResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DialogflowResponseMessage'
+        mergeBehavior:
+          type: string
+          enum:
+            - MERGE_BEHAVIOR_UNSPECIFIED
+            - APPEND
+            - REPLACE
+    DialogflowSentimentAnalysisResult:
+      type: object
+      properties:
+        score:
+          type: number
+        magnitude:
+          type: number
 
     Error:
       type: "object"
