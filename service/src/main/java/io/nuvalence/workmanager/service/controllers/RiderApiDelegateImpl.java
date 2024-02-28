@@ -26,35 +26,45 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
     private final RecordService recordService;
 
     @Override
-    public ResponseEntity<DialogflowWebhookResponse> validateRiderWebhook(DialogflowWebhookRequest webhookRequest) {
-        final Map<String, Object> parametersIn = webhookRequest != null
-                && webhookRequest.getSessionInfo() != null && webhookRequest.getSessionInfo().getParameters() != null
-                ? webhookRequest.getSessionInfo().getParameters()
-                : new HashMap<>();
+    public ResponseEntity<DialogflowWebhookResponse> validateRiderWebhook(
+            DialogflowWebhookRequest webhookRequest) {
+        final Map<String, Object> parametersIn =
+                webhookRequest != null
+                                && webhookRequest.getSessionInfo() != null
+                                && webhookRequest.getSessionInfo().getParameters() != null
+                        ? webhookRequest.getSessionInfo().getParameters()
+                        : new HashMap<>();
         final Map<String, Object> parametersOut = new HashMap<>();
 
         boolean riderFound = false;
 
         if (parametersIn.containsKey("$flow.rider-id")) {
             String riderId = parametersIn.get("$flow.rider-id").toString();
-            final RecordFilters filters = new RecordFilters(
-                    RIDER_RECORD_DEFINITION_KEY,
-                    List.of(),
-                    riderId,
-                    true,
-                    "externalId", "ASC", 0, 10);
+            final RecordFilters filters =
+                    new RecordFilters(
+                            RIDER_RECORD_DEFINITION_KEY,
+                            List.of(),
+                            riderId,
+                            true,
+                            "externalId",
+                            "ASC",
+                            0,
+                            10);
 
-            final Optional<Record> foundRider = recordService.getRecordsByFilters(filters).stream().findFirst();
+            final Optional<Record> foundRider =
+                    recordService.getRecordsByFilters(filters).stream().findFirst();
             if (foundRider.isPresent()) {
                 riderFound = true;
-                parametersOut.put("$request.rider-name", foundRider.get().getData().get("fullName"));
+                parametersOut.put(
+                        "$request.rider-name", foundRider.get().getData().get("fullName"));
             }
         }
 
         parametersOut.put("$request.rider-found", riderFound);
 
-        DialogflowWebhookResponse response = new DialogflowWebhookResponse()
-                .sessionInfo(new DialogflowSessionInfo().parameters(parametersOut));
+        DialogflowWebhookResponse response =
+                new DialogflowWebhookResponse()
+                        .sessionInfo(new DialogflowSessionInfo().parameters(parametersOut));
 
         return ResponseEntity.status(riderFound ? 200 : 404).body(response);
     }

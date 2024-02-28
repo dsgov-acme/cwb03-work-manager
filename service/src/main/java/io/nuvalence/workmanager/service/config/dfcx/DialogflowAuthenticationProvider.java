@@ -1,6 +1,5 @@
 package io.nuvalence.workmanager.service.config.dfcx;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -16,12 +15,14 @@ public class DialogflowAuthenticationProvider implements AuthenticationProvider 
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication)
+            throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         // "validate" username and password here
-        // In the future, we want something more solid than this in place for DFCX => WM auth in place
+        // In the future, we want something more solid than this in place for DFCX => WM auth in
+        // place
         if (!username.equals(USERNAME) || !password.equals(PASSWORD)) {
             throw new AuthenticationServiceException("Error verifying basic auth.");
         }

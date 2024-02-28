@@ -73,9 +73,7 @@ public class RecordFilters extends BaseFilters {
                     predicates.add(
                             criteriaBuilder.equal(
                                     criteriaBuilder.lower(root.get("externalId")),
-                                    this.externalId.toLowerCase(Locale.ROOT)
-                            )
-                    );
+                                    this.externalId.toLowerCase(Locale.ROOT)));
                 } else {
                     predicates.add(
                             criteriaBuilder.like(
