@@ -160,6 +160,7 @@ public class RecordsApiDelegateImpl implements RecordsApiDelegate {
                         recordDefinitionKey,
                         status,
                         externalId,
+                        false,
                         sortBy,
                         sortOrder,
                         pageNumber,
