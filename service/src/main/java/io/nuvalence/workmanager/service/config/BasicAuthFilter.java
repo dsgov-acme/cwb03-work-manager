@@ -35,29 +35,31 @@ public class BasicAuthFilter extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            Authentication authenticationResult = this.attemptAuthentication(request, response);
-            SecurityContextHolder.getContext().setAuthentication(authenticationResult);
+            if (this.authenticationIsApplicable(request)) {
+                Authentication authenticationResult = this.attemptAuthentication(request);
+                SecurityContextHolder.getContext().setAuthentication(authenticationResult);
+            }
         } catch (AuthenticationException ex) {
             log.warn("Error authenticating client", ex);
         }
         filterChain.doFilter(request, response);
     }
 
-    private Authentication attemptAuthentication(
-            HttpServletRequest request, HttpServletResponse response)
+    private boolean authenticationIsApplicable(HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+        return !StringUtils.isEmpty(authorization)
+                && StringUtils.startsWithIgnoreCase(authorization, "basic");
+    }
+
+    private Authentication attemptAuthentication(HttpServletRequest request)
             throws AuthenticationException {
         String authorization = request.getHeader("Authorization");
-        if (StringUtils.isEmpty(authorization)
-                || !StringUtils.startsWithIgnoreCase(authorization, "basic")) {
-            return null;
-        } else {
-            String base64Credentials = authorization.substring("Basic".length()).trim();
-            byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
-            String credentials = new String(credDecoded, StandardCharsets.UTF_8);
-            final String[] values = credentials.split(":", 2);
-            DialogflowAuthenticationToken authRequest =
-                    new DialogflowAuthenticationToken(values[0], values[1], namespace);
-            return this.authenticationManager.authenticate(authRequest);
-        }
+        String base64Credentials = authorization.substring("Basic".length()).trim();
+        byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
+        String credentials = new String(credDecoded, StandardCharsets.UTF_8);
+        final String[] values = credentials.split(":", 2);
+        DialogflowAuthenticationToken authRequest =
+                new DialogflowAuthenticationToken(values[0], values[1], namespace);
+        return this.authenticationManager.authenticate(authRequest);
     }
 }
