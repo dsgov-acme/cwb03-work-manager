@@ -22,25 +22,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TransactionDefinitionSetDashboardResultModel'
-  /rider/validate:
-    post:
-      summary: Validates that a rider with the provided Rider ID exists.
-      operationId: validateRiderWebhook.
-      tags: [ 'Rider' ]
-      requestBody:
-        description: The webhook request body.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DialogflowWebhookRequest'
-      responses:
-        '200':
-          description: Successfully found a rider with the provided rider id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DialogflowWebhookResponse'
   /admin/dashboard-order:
     get:
       summary: Get dashboard order.
@@ -2740,6 +2721,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseMessageModel'
+  /dfcx/rider-lookup:
+    post:
+      summary: Looks up a rider with the provided Rider ID.
+      operationId: riderLookup.
+      tags:
+        - DFCX
+        - Rider
+      requestBody:
+        description: The webhook request body.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DialogflowWebhookRequest'
+      responses:
+        '200':
+          description: Successfully found a rider with the provided rider id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DialogflowWebhookResponse'
+  /dfcx/rider-scheduled-rides:
+    post:
+      summary: Gets the non-cancelled and non-completed rides for the specified rider.
+      operationId: getRiderScheduledRides.
+      tags:
+        - DFCX
+        - Ride
+        - Rider
+      requestBody:
+        description: The webhook request body.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DialogflowWebhookRequest'
+      responses:
+        '200':
+          description: A list of rides.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DialogflowWebhookResponse'
 components:
   schemas:
     ConversationRepliesResponseModel:
@@ -4618,6 +4642,15 @@ components:
           type: number
         magnitude:
           type: number
+    DialogflowSysDate:
+      type: object
+      properties:
+        year:
+          type: integer
+        month:
+          type: integer
+        day:
+          type: integer
 
     Error:
       type: "object"
