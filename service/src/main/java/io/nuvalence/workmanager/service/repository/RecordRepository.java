@@ -30,4 +30,6 @@ public interface RecordRepository
     List<Object[]> getStatusCountByRecordDefinitionKey(String recordDefinitionKey);
 
     Record findBySubjectUserId(String subjectUserId);
+
+    Record findByExternalId(String externalId);
 }

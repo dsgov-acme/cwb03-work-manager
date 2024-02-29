@@ -11,5 +11,6 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class PromiseTimeResponse {
     private AnchorType anchor;
+    private String riderId;
     private PromiseTime[] promises;
 }

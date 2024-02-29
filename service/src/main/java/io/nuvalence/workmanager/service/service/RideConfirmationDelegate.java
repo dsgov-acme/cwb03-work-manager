@@ -49,7 +49,7 @@ public class RideConfirmationDelegate implements JavaDelegate {
         // confirm the ride in partner API
         rideService.submitReservation(
                 SubmitReservationRequest.builder()
-                        .id(transaction.getData().getProperty("promiseTimeId", String.class))
+                        .id(transaction.getData().getProperty("promiseTime.id", String.class))
                         .build());
 
         transactionService.updateTransaction(transaction);

@@ -10,5 +10,5 @@ import lombok.extern.jackson.Jacksonized;
 @ToString
 @Jacksonized
 public class ReservationDetailsRequest {
-    private String reservationId;
+    private String reservationId; // same as promiseTimeId
 }

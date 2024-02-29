@@ -1,13 +1,11 @@
 package io.nuvalence.workmanager.service.ride.models;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
-@Getter
+@Data
 @Builder
-@ToString
 @Jacksonized
 public class PromiseTimeRequest {
     private String riderId;
@@ -15,4 +13,5 @@ public class PromiseTimeRequest {
     private String dropPlaceId;
     private AnchorType anchor;
     private PassengerAccommodations passengerAccommodations;
+    private long requestTime;
 }

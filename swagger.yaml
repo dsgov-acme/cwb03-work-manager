@@ -4096,6 +4096,9 @@ components:
           type: string
         dropPlaceId:
           type: string
+        requestTime:
+          type: integer
+          format: int64
         anchor:
           $ref: '#/components/schemas/AnchorType'
         passengerAccommodations:
@@ -4225,9 +4228,9 @@ components:
     CommonAddress:
       type: object
       properties:
-        address1:
+        addressLine1:
           type: string
-        address2:
+        addressLine2:
           type: string
         city:
           type: string
