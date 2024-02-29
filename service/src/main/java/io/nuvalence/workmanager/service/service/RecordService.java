@@ -59,6 +59,10 @@ public class RecordService {
         return Optional.ofNullable(repository.findBySubjectUserId(subjectUserId));
     }
 
+    public Optional<Record> getRecordByExternalId(final String externalId) {
+        return Optional.ofNullable(repository.findByExternalId(externalId));
+    }
+
     public Page<Record> getRecordsByFilters(RecordFilters filter) {
 
         return repository.findAll(filter.getRecordSpecification(), filter.getPageRequest());
