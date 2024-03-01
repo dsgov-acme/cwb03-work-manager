@@ -43,7 +43,7 @@ public class RiderAllocationDelegate implements JavaDelegate {
         try {
             riderId = transaction.getData().getProperty("rider.id", String.class);
         } catch (IllegalArgumentException e) {
-            // do nothing
+            log.info("Transaction does not contain riderId info.  Continuing.");
         }
 
         if (riderId == null) {
