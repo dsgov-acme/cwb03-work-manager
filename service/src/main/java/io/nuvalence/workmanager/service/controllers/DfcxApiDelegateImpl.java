@@ -13,7 +13,9 @@ import io.nuvalence.workmanager.service.mapper.RideMapper;
 import io.nuvalence.workmanager.service.models.RecordFilters;
 import io.nuvalence.workmanager.service.models.SearchTransactionsFilters;
 import io.nuvalence.workmanager.service.models.mta.DailyRideSummary;
+import io.nuvalence.workmanager.service.models.mta.DailyRideSummaryComparator;
 import io.nuvalence.workmanager.service.models.mta.RideSummary;
+import io.nuvalence.workmanager.service.models.mta.RideSummaryComparator;
 import io.nuvalence.workmanager.service.service.RecordService;
 import io.nuvalence.workmanager.service.service.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -74,7 +78,7 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
                     recordService.getRecordsByFilters(filters).stream().findFirst();
             if (foundRider.isPresent()) {
                 riderFound = true;
-                parametersOut.put("user-id", foundRider.get().getSubjectUserId());
+                parametersOut.put("rider-user-id", foundRider.get().getSubjectUserId());
                 parametersOut.put("rider-name", foundRider.get().getData().get("fullName"));
                 parametersOut.put("rider-id", foundRider.get().getData().get("id"));
             }
@@ -117,6 +121,7 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
                                 .entrySet()
                                 .stream()
                                 .map(this::toDailyRideSummary)
+                                .sorted(new DailyRideSummaryComparator())
                                 .toList();
                 parametersOut.put("$flow.scheduled-rides", dailySummaries);
             } else {
@@ -137,8 +142,8 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
         try {
             return DailyRideSummary.builder()
                     .formattedDate(rides.getKey())
-                    .date(dialogflowEntityMapper.mapStringToSysDate(rides.getKey()))
-                    .rides(rides.getValue())
+                    .date(dialogflowEntityMapper.mapStringToSysDate(rides.getKey(), true))
+                    .rides(rides.getValue().stream().sorted(new RideSummaryComparator()).toList())
                     .build();
         } catch (ParseException e) {
             throw new RuntimeException(e);
@@ -146,8 +151,9 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
     }
 
     private String toSortableDate(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.ROOT);
-        return sdf.format(date);
+        ZonedDateTime estDate = date.toInstant().atZone(ZoneId.of("America/New_York"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.ROOT);
+        return estDate.format(formatter);
     }
 
     private Map<String, Object> getRequestParameters(DialogflowWebhookRequest webhookRequest) {
