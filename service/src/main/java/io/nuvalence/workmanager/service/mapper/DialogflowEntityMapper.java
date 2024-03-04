@@ -54,8 +54,7 @@ public interface DialogflowEntityMapper {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
 
-        return SysTime
-                .builder()
+        return SysTime.builder()
                 .hours(calendar.get(Calendar.HOUR_OF_DAY))
                 .minutes(calendar.get(Calendar.MINUTE))
                 .seconds(calendar.get(Calendar.SECOND))

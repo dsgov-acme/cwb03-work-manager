@@ -27,15 +27,16 @@ public abstract class RideMapper {
         long pickupTime = entity.getProperty("promiseTime.pickupTime", long.class);
         long dropoffTime = entity.getProperty("dropTime", long.class);
 
-        RideSummary ride = RideSummary.builder()
-                .dropoff(new Date(pickupTime * 1000))
-                .pickup(new Date(dropoffTime * 1000))
-                .pickupLocation(getAddressLabel(pickLocation))
-                .dropoffLocation(getAddressLabel(dropLocation))
-                .status("scheduled")
-                .driverName("John Smith")
-                .driverVehicle("Mazda 3")
-                .build();
+        RideSummary ride =
+                RideSummary.builder()
+                        .dropoff(new Date(pickupTime * 1000))
+                        .pickup(new Date(dropoffTime * 1000))
+                        .pickupLocation(getAddressLabel(pickLocation))
+                        .dropoffLocation(getAddressLabel(dropLocation))
+                        .status("scheduled")
+                        .driverName("John Smith")
+                        .driverVehicle("Mazda 3")
+                        .build();
         populateDialogflowPropertiesOnRideSummary(ride);
         return ride;
     }
@@ -43,14 +44,12 @@ public abstract class RideMapper {
     private void populateDialogflowPropertiesOnRideSummary(RideSummary ride) {
         ride.setPickupDate(dialogflowEntityMapper.mapDateToSysDate(ride.getPickup()));
         ride.setPickupTime(dialogflowEntityMapper.mapDateToSysTime(ride.getPickup()));
-        ride.setPickupTimeMax(dialogflowEntityMapper.mapDateToSysTime(
-                addMinutesToDate(ride.getPickup(), 30)
-        ));
+        ride.setPickupTimeMax(
+                dialogflowEntityMapper.mapDateToSysTime(addMinutesToDate(ride.getPickup(), 30)));
         ride.setDropoffDate(dialogflowEntityMapper.mapDateToSysDate(ride.getDropoff()));
         ride.setDropoffTime(dialogflowEntityMapper.mapDateToSysTime(ride.getDropoff()));
-        ride.setDropoffTimeMax(dialogflowEntityMapper.mapDateToSysTime(
-                addMinutesToDate(ride.getDropoff(), 30)
-        ));
+        ride.setDropoffTimeMax(
+                dialogflowEntityMapper.mapDateToSysTime(addMinutesToDate(ride.getDropoff(), 30)));
     }
 
     private Date addMinutesToDate(Date date, int minutesToAdd) {
@@ -66,9 +65,10 @@ public abstract class RideMapper {
             return location.getName();
         }
 
-        return String.format("%s %s",
-                location.getAddress().getAddressLine1(),
-                Optional.ofNullable(location.getAddress().getAddressLine2()).orElse("")
-        ).trim();
+        return String.format(
+                        "%s %s",
+                        location.getAddress().getAddressLine1(),
+                        Optional.ofNullable(location.getAddress().getAddressLine2()).orElse(""))
+                .trim();
     }
 }

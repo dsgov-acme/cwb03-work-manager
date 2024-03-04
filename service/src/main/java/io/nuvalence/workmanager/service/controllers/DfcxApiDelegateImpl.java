@@ -1,5 +1,7 @@
 package io.nuvalence.workmanager.service.controllers;
 
+import static java.util.stream.Collectors.groupingBy;
+
 import io.nuvalence.workmanager.service.domain.record.Record;
 import io.nuvalence.workmanager.service.domain.transaction.Transaction;
 import io.nuvalence.workmanager.service.generated.controllers.DfcxApiDelegate;
@@ -25,8 +27,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static java.util.stream.Collectors.groupingBy;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -39,7 +39,8 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
     private final DialogflowEntityMapper dialogflowEntityMapper;
 
     @Override
-    public ResponseEntity<DialogflowWebhookResponse> action(DialogflowWebhookRequest webhookRequest) {
+    public ResponseEntity<DialogflowWebhookResponse> action(
+            DialogflowWebhookRequest webhookRequest) {
         String tag = webhookRequest.getFulfillmentInfo().getTag();
 
         return switch (tag) {
@@ -95,24 +96,28 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
         final String riderUserId = parametersIn.get("rider-user-id").toString();
 
         if (!StringUtils.isEmpty(riderUserId)) {
-            SearchTransactionsFilters filters = SearchTransactionsFilters.builder()
-                    .transactionDefinitionKeys(List.of("MTAReservation"))
-                    .status(List.of("CONFIRMED"))
-                    .subjectUserId(riderUserId)
-                    .sortBy("createdTimestamp")
-                    .sortOrder("ASC")
-                    .pageNumber(0)
-                    .pageSize(99)
-                    .build();
+            SearchTransactionsFilters filters =
+                    SearchTransactionsFilters.builder()
+                            .transactionDefinitionKeys(List.of("MTAReservation"))
+                            .status(List.of("CONFIRMED"))
+                            .subjectUserId(riderUserId)
+                            .sortBy("createdTimestamp")
+                            .sortOrder("ASC")
+                            .pageNumber(0)
+                            .pageSize(99)
+                            .build();
 
-            Page<Transaction> pagedTransactions = transactionService.getFilteredTransactions(filters);
+            Page<Transaction> pagedTransactions =
+                    transactionService.getFilteredTransactions(filters);
             if (!pagedTransactions.isEmpty()) {
-                List<DailyRideSummary> dailySummaries = pagedTransactions.stream()
-                        .map(t -> rideMapper.mapEntityToRideSummary(t.getData()))
-                        .collect(groupingBy(r -> toSortableDate(r.getPickup())))
-                        .entrySet()
-                        .stream().map(this::toDailyRideSummary)
-                        .toList();
+                List<DailyRideSummary> dailySummaries =
+                        pagedTransactions.stream()
+                                .map(t -> rideMapper.mapEntityToRideSummary(t.getData()))
+                                .collect(groupingBy(r -> toSortableDate(r.getPickup())))
+                                .entrySet()
+                                .stream()
+                                .map(this::toDailyRideSummary)
+                                .toList();
                 parametersOut.put("$flow.scheduled-rides", dailySummaries);
             } else {
                 parametersOut.put("$flow.scheduled-rides", List.of());
@@ -146,8 +151,9 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
     }
 
     private Map<String, Object> getRequestParameters(DialogflowWebhookRequest webhookRequest) {
-        return webhookRequest != null && webhookRequest.getSessionInfo() != null
-                && webhookRequest.getSessionInfo().getParameters() != null
+        return webhookRequest != null
+                        && webhookRequest.getSessionInfo() != null
+                        && webhookRequest.getSessionInfo().getParameters() != null
                 ? webhookRequest.getSessionInfo().getParameters()
                 : new HashMap<>();
     }
