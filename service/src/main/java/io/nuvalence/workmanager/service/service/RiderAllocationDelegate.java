@@ -38,20 +38,53 @@ public class RiderAllocationDelegate implements JavaDelegate {
         Transaction transaction = transactionOptional.get();
         transaction.setProcessInstanceId(execution.getProcessInstanceId());
 
-        String riderId =
-                Optional.ofNullable(transaction.getSubjectUserId())
-                        .map(recordService::getRecordBySubjectUserId)
+        String riderId = null;
+
+        try {
+            riderId = transaction.getData().getProperty("rider.id", String.class);
+        } catch (IllegalArgumentException e) {
+            log.info("Transaction does not contain riderId info.  Continuing.");
+        }
+
+        if (riderId == null) {
+            // attempt to look up the riderId by the subjectUserId in the transaction if it was not
+            // set
+            riderId =
+                    Optional.ofNullable(transaction.getSubjectUserId())
+                            .map(recordService::getRecordBySubjectUserId)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .map(Record::getExternalId)
+                            .orElse(null);
+        }
+
+        String riderUserId =
+                Optional.ofNullable(riderId)
+                        .map(recordService::getRecordByExternalId)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .map(Record::getExternalId)
+                        .map(Record::getSubjectUserId)
                         .orElse(null);
 
         log.info(
-                "RiderAllocationDelegate - Assigning riderId {} to transaction {}",
+                "RiderAllocationDelegate - Assigning riderId {} and subjectUserId {} to transaction"
+                        + " {}",
                 riderId,
+                riderUserId,
                 transactionId);
 
         transaction.setExternalId(riderId);
+        if (riderUserId != null) {
+            try {
+                transaction.setSubjectProfileId(UUID.fromString(riderUserId));
+            } catch (IllegalArgumentException e) {
+                log.error(
+                        "Unable to assign subjectUserId of {} to transaction {}",
+                        riderId,
+                        transactionId,
+                        e);
+            }
+        }
 
         transactionService.updateTransaction(transaction);
     }

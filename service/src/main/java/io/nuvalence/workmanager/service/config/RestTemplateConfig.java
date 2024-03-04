@@ -6,6 +6,7 @@ import io.nuvalence.workmanager.service.utils.ServiceTokenProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,6 +27,7 @@ public class RestTemplateConfig {
      * @return configured http client
      */
     @Bean
+    @Primary
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public RestTemplate httpClient(ServiceTokenProvider serviceTokenProvider) {
 
@@ -43,5 +45,11 @@ public class RestTemplateConfig {
                         }));
 
         return httpClient;
+    }
+
+    @Bean(name = "noAuthHttpClient")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public RestTemplate noAuthHttpClient() {
+        return new RestTemplate();
     }
 }

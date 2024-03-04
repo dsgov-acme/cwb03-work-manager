@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,6 +37,11 @@ public class SavedLocationServiceImpl implements SavedLocationService {
                 transactionRepository.findByTransactionDefinitionKeyAndSubjectUserIdAndStatus(
                         SAVED_LOCATION_KEY, userId, SAVED_LOCATION_STATUS);
         return transactions.stream().map(this::convertToMTALocation).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<MTALocation> getSavedLocationsById(UUID savedLocationId) {
+        return transactionRepository.findById(savedLocationId).map(this::convertToMTALocation);
     }
 
     private MTALocation convertToMTALocation(Transaction transaction) {
