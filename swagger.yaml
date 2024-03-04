@@ -22,25 +22,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TransactionDefinitionSetDashboardResultModel'
-  /rider/validate:
-    post:
-      summary: Validates that a rider with the provided Rider ID exists.
-      operationId: validateRiderWebhook.
-      tags: [ 'Rider' ]
-      requestBody:
-        description: The webhook request body.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DialogflowWebhookRequest'
-      responses:
-        '200':
-          description: Successfully found a rider with the provided rider id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DialogflowWebhookResponse'
   /admin/dashboard-order:
     get:
       summary: Get dashboard order.
@@ -2740,6 +2721,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseMessageModel'
+  /dfcx/action:
+    post:
+      summary: Executes a dialogflow action with the provided tag.
+      operationId: action
+      tags:
+        - DFCX
+      requestBody:
+        description: The webhook request body.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DialogflowWebhookRequest'
+      responses:
+        '200':
+          description: Successfully executed the action.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DialogflowWebhookResponse'
 components:
   schemas:
     ConversationRepliesResponseModel:
