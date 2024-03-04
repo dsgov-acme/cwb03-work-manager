@@ -21,8 +21,7 @@ public class DialogflowAuthenticationProvider implements AuthenticationProvider 
         String password = authentication.getCredentials().toString();
 
         // "validate" username and password here
-        // In the future, we want something more solid than this in place for DFCX => WM auth in
-        // place
+        // In the future, we want something more solid than this in place for DFCX => WM auth
         if (!username.equals(USERNAME) || !password.equals(PASSWORD)) {
             throw new AuthenticationServiceException("Error verifying basic auth.");
         }
