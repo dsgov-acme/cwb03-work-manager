@@ -29,7 +29,7 @@ public class RideSummary {
     private SysTime actualDropoffTime;
     private String pickupLocation;
     private String dropoffLocation;
-    private String status;
+    private RideStatusEnum status;
     private String driverName;
     private String driverVehicle;
 }

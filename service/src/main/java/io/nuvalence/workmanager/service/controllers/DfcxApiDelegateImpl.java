@@ -12,10 +12,7 @@ import io.nuvalence.workmanager.service.mapper.DialogflowEntityMapper;
 import io.nuvalence.workmanager.service.mapper.RideMapper;
 import io.nuvalence.workmanager.service.models.RecordFilters;
 import io.nuvalence.workmanager.service.models.SearchTransactionsFilters;
-import io.nuvalence.workmanager.service.models.mta.DailyRideSummary;
-import io.nuvalence.workmanager.service.models.mta.DailyRideSummaryComparator;
-import io.nuvalence.workmanager.service.models.mta.RideSummary;
-import io.nuvalence.workmanager.service.models.mta.RideSummaryComparator;
+import io.nuvalence.workmanager.service.models.mta.*;
 import io.nuvalence.workmanager.service.service.RecordService;
 import io.nuvalence.workmanager.service.service.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -117,6 +114,7 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
                 List<DailyRideSummary> dailySummaries =
                         pagedTransactions.stream()
                                 .map(t -> rideMapper.mapEntityToRideSummary(t.getData()))
+                                .filter(t -> t != null && t.getStatus() != RideStatusEnum.COMPLETED)
                                 .collect(groupingBy(r -> toSortableDate(r.getPickup())))
                                 .entrySet()
                                 .stream()
