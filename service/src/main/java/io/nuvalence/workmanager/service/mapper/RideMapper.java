@@ -2,6 +2,7 @@ package io.nuvalence.workmanager.service.mapper;
 
 import io.nuvalence.workmanager.service.domain.dynamicschema.DynamicEntity;
 import io.nuvalence.workmanager.service.models.CommonAddress;
+import io.nuvalence.workmanager.service.models.mta.RideStatusEnum;
 import io.nuvalence.workmanager.service.models.mta.RideSummary;
 import io.nuvalence.workmanager.service.ride.models.MTALocation;
 import io.nuvalence.workmanager.service.ride.models.MTALocationType;
@@ -10,6 +11,7 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -65,14 +67,25 @@ public abstract class RideMapper {
                 mapEntityToMTALocation((DynamicEntity) entity.get("dropLocation"));
         long pickupTime = entity.getProperty("promiseTime.pickupTime", Integer.class);
         long dropoffTime = entity.getProperty("promiseTime.dropTime", Integer.class);
+        RideStatusEnum status = RideStatusEnum.SCHEDULED;
+
+        Date pickupDate = getUtcDateFromSecondsSinceEpoch(pickupTime);
+        Date dropoffDate = getUtcDateFromSecondsSinceEpoch(dropoffTime);
+
+        Instant now = Instant.now();
+        if (now.isAfter(dropoffDate.toInstant())) {
+            status = RideStatusEnum.COMPLETED;
+        } else if (now.isAfter(pickupDate.toInstant()) && now.isBefore(dropoffDate.toInstant())) {
+            status = RideStatusEnum.IN_PROGRESS;
+        }
 
         RideSummary ride =
                 RideSummary.builder()
-                        .pickup(getUtcDateFromSecondsSinceEpoch(pickupTime))
-                        .dropoff(getUtcDateFromSecondsSinceEpoch(dropoffTime))
+                        .pickup(pickupDate)
+                        .dropoff(dropoffDate)
                         .pickupLocation(getAddressLabel(pickLocation))
                         .dropoffLocation(getAddressLabel(dropLocation))
-                        .status("scheduled")
+                        .status(status)
                         .driverName("John Smith")
                         .driverVehicle("Mazda 3")
                         .build();
