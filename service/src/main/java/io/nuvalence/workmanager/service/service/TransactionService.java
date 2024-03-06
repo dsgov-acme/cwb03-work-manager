@@ -116,7 +116,7 @@ public class TransactionService {
             throws MissingSchemaException {
 
         Transaction savedTransaction = repository.save(factory.createTransaction(definition));
-        startTask(savedTransaction, definition.getProcessDefinitionKey());
+        startTask(savedTransaction, definition.getProcessDefinitionKey(), null);
         return savedTransaction;
     }
 
@@ -131,6 +131,32 @@ public class TransactionService {
     public Transaction createTransactionWithIndividualSubject(
             final TransactionDefinition definition, Individual individual)
             throws MissingSchemaException {
+        return createTransactionWithIndividualSubjectInternal(definition, individual, null);
+    }
+
+    /**
+     * Create a new transaction for a given transaction definition and individual, with some metadata.
+     *
+     * @param definition Type of transaction to create
+     * @param individual Individual to associate with transaction
+     * @param metadata Any extra data that should be stored in Camunda to be used throughout the process.
+     *
+     * @return The newly created transaction
+     * @throws MissingSchemaException if the transaction definition references a schema that does not exist
+     */
+    public Transaction createTransactionWithIndividualSubject(
+            final TransactionDefinition definition,
+            Individual individual,
+            Map<String, Object> metadata)
+            throws MissingSchemaException {
+        return createTransactionWithIndividualSubjectInternal(definition, individual, metadata);
+    }
+
+    private Transaction createTransactionWithIndividualSubjectInternal(
+            final TransactionDefinition definition,
+            Individual individual,
+            Map<String, Object> metadata)
+            throws MissingSchemaException {
         // TODO in the future we may add support for other subject types
         if (!definition.getSubjectType().equals(ProfileType.INDIVIDUAL)) {
             throw new BusinessLogicException(
@@ -141,13 +167,19 @@ public class TransactionService {
         transaction.setSubjectProfileId(individual.getId());
         transaction.setSubjectProfileType(ProfileType.INDIVIDUAL);
         Transaction savedTransaction = repository.save(transaction);
-        startTask(savedTransaction, definition.getProcessDefinitionKey());
+        startTask(savedTransaction, definition.getProcessDefinitionKey(), metadata);
 
         return savedTransaction;
     }
 
-    private void startTask(Transaction transaction, String processDefinitionKey) {
-        transactionTaskService.startTask(transaction, processDefinitionKey);
+    private void startTask(
+            Transaction transaction, String processDefinitionKey, Map<String, Object> metadata) {
+        if (metadata == null || metadata.isEmpty()) {
+            transactionTaskService.startTask(transaction, processDefinitionKey);
+            return;
+        }
+
+        transactionTaskService.startTaskWithMetadata(transaction, processDefinitionKey, metadata);
     }
 
     /**

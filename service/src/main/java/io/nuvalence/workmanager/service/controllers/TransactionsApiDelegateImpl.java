@@ -510,8 +510,11 @@ public class TransactionsApiDelegateImpl
             Individual individual = individualService.createOrGetIndividualForCurrentUser();
 
             final Transaction transaction =
-                    transactionService.createTransactionWithIndividualSubject(
-                            definition, individual);
+                    (request.getMetadata() == null || request.getMetadata().isEmpty())
+                            ? transactionService.createTransactionWithIndividualSubject(
+                                    definition, individual)
+                            : transactionService.createTransactionWithIndividualSubject(
+                                    definition, individual, request.getMetadata());
 
             individualUserLinkService.createAdminUserLinkForProfile(transaction);
 
