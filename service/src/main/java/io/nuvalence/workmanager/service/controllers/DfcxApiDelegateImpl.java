@@ -119,7 +119,7 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
                                 .entrySet()
                                 .stream()
                                 .map(this::toDailyRideSummary)
-                                .sorted(new DailyRideSummaryComparator())
+                                .sorted(Comparator.comparing(DailyRideSummary::getFormattedDate))
                                 .toList();
                 parametersOut.put("$flow.scheduled-rides", dailySummaries);
             } else {
@@ -141,7 +141,10 @@ public class DfcxApiDelegateImpl implements DfcxApiDelegate {
             return DailyRideSummary.builder()
                     .formattedDate(rides.getKey())
                     .date(dialogflowEntityMapper.mapStringToSysDate(rides.getKey(), true))
-                    .rides(rides.getValue().stream().sorted(new RideSummaryComparator()).toList())
+                    .rides(
+                            rides.getValue().stream()
+                                    .sorted(Comparator.comparing(RideSummary::getPickup))
+                                    .toList())
                     .build();
         } catch (ParseException e) {
             throw new RuntimeException(e);

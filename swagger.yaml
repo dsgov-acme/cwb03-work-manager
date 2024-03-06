@@ -3584,6 +3584,9 @@ components:
         transactionDefinitionKey:
           type: string
           pattern: '^[a-zA-Z0-9]+$'
+        metadata:
+          type: object
+          additionalProperties: true
     TransactionUpdateRequest:
       type: object
       required:
@@ -4331,6 +4334,8 @@ components:
         lastUpdatedTimestamp:
           type: string
           format: date-time
+        subjectUserId:
+          type: string
         data:
           type: object
           additionalProperties: true

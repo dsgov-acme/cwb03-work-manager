@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service to handle task interactions on transactions.
@@ -105,6 +106,27 @@ public class TransactionTaskService {
                 .getRuntimeService()
                 .startProcessInstanceByKey(
                         processDefinitionKey, Map.of("transactionId", transaction.getId()));
+    }
+
+    /**
+     * Start a Camunda process.
+     *
+     * @param transaction Transaction that starts the camunda process
+     * @param processDefinitionKey Key of the camunda process definition on which the process being started is based
+     * @param metadata Any extra data that should be stored in Camunda to be used throughout the process.
+     */
+    public void startTaskWithMetadata(
+            Transaction transaction, String processDefinitionKey, Map<String, Object> metadata) {
+
+        Map<String, Object> data = Map.of("transactionId", transaction.getId());
+        Stream<Map.Entry<String, Object>> combined =
+                Stream.concat(data.entrySet().stream(), metadata.entrySet().stream());
+        Map<String, Object> mergedMap =
+                combined.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        processEngine
+                .getRuntimeService()
+                .startProcessInstanceByKey(processDefinitionKey, mergedMap);
     }
 
     /**

@@ -4,6 +4,7 @@ import io.nuvalence.workmanager.service.domain.record.Record;
 import io.nuvalence.workmanager.service.domain.transaction.Transaction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,8 @@ public class RiderAllocationDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         UUID transactionId = (UUID) execution.getVariable("transactionId");
+        String riderId = (String) execution.getVariable("riderId");
+        String riderUserId = (String) execution.getVariable("riderUserId");
 
         if (transactionId == null) {
             log.warn("RiderAllocationDelegate - transactionId not found");
@@ -38,15 +41,15 @@ public class RiderAllocationDelegate implements JavaDelegate {
         Transaction transaction = transactionOptional.get();
         transaction.setProcessInstanceId(execution.getProcessInstanceId());
 
-        String riderId = null;
-
-        try {
-            riderId = transaction.getData().getProperty("rider.id", String.class);
-        } catch (IllegalArgumentException e) {
-            log.info("Transaction does not contain riderId info.  Continuing.");
+        if (StringUtils.isEmpty(riderId)) {
+            try {
+                riderId = transaction.getData().getProperty("rider.id", String.class);
+            } catch (IllegalArgumentException e) {
+                log.info("Transaction does not contain riderId info.  Continuing.");
+            }
         }
 
-        if (riderId == null) {
+        if (StringUtils.isEmpty(riderId)) {
             // attempt to look up the riderId by the subjectUserId in the transaction if it was not
             // set
             riderId =
@@ -58,13 +61,15 @@ public class RiderAllocationDelegate implements JavaDelegate {
                             .orElse(null);
         }
 
-        String riderUserId =
-                Optional.ofNullable(riderId)
-                        .map(recordService::getRecordByExternalId)
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .map(Record::getSubjectUserId)
-                        .orElse(null);
+        if (StringUtils.isEmpty(riderUserId)) {
+            riderUserId =
+                    Optional.ofNullable(riderId)
+                            .map(recordService::getRecordByExternalId)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .map(Record::getSubjectUserId)
+                            .orElse(null);
+        }
 
         log.info(
                 "RiderAllocationDelegate - Assigning riderId {} and subjectUserId {} to transaction"
@@ -74,7 +79,7 @@ public class RiderAllocationDelegate implements JavaDelegate {
                 transactionId);
 
         transaction.setExternalId(riderId);
-        if (riderUserId != null) {
+        if (StringUtils.isNotEmpty(riderUserId)) {
             try {
                 transaction.setSubjectProfileId(UUID.fromString(riderUserId));
             } catch (IllegalArgumentException e) {

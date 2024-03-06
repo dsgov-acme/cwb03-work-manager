@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,21 +29,15 @@ public class SavedLocationApiDelegateImpl implements SavedLocationsApiDelegate {
             log.error("One of riderId or userId are required.");
             return ResponseEntity.badRequest().build();
         }
-        if (userId != null) {
-            return Optional.of(userId)
-                    .map(savedLocationService::getSavedLocationsByUserId)
-                    .orElseGet(Collections::emptyList)
-                    .stream()
-                    .map(savedLocationMapper::toDto)
-                    .collect(Collectors.collectingAndThen(Collectors.toList(), ResponseEntity::ok));
-        }
 
-        // query by rider id
-        return Optional.of(riderId)
-                .map(savedLocationService::getSavedLocationsByRiderId)
-                .orElseGet(Collections::emptyList)
-                .stream()
+        var locations =
+                userId != null
+                        ? savedLocationService.getSavedLocationsByUserId(userId)
+                        : savedLocationService.getSavedLocationsByRiderId(riderId);
+
+        return Optional.of(locations).orElseGet(Collections::emptyList).stream()
                 .map(savedLocationMapper::toDto)
+                .sorted(Comparator.comparing(MTALocation::getName))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), ResponseEntity::ok));
     }
 }
