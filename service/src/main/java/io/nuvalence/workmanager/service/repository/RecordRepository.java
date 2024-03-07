@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,9 @@ public interface RecordRepository
             "SELECT r.status, COUNT(r) FROM Record r WHERE r.recordDefinitionKey = ?1 GROUP BY"
                     + " r.status")
     List<Object[]> getStatusCountByRecordDefinitionKey(String recordDefinitionKey);
+
+    @Query(value = "SELECT r.* FROM Record r WHERE CAST(r.data->'email' AS VARCHAR(500)) = :email", nativeQuery = true)
+    List<Record> getRecordByEmail(@Param("email") String email);
 
     Record findBySubjectUserId(String subjectUserId);
 
