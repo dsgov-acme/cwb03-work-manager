@@ -19,6 +19,7 @@ public class RideConfirmationDelegate implements JavaDelegate {
 
     private final TransactionService transactionService;
     private final RideRequestService rideService;
+    private final RiderAllocationDelegate riderAllocationDelegate;
     private final String CONFIRMED_STATUS = "CONFIRMED";
 
     @Override
@@ -53,5 +54,7 @@ public class RideConfirmationDelegate implements JavaDelegate {
                         .build());
 
         transactionService.updateTransaction(transaction);
+
+        riderAllocationDelegate.execute(execution);
     }
 }

@@ -104,6 +104,7 @@ public class Transaction implements DynamicEntityContainer, UpdateTrackedEntity 
     @Column(name = "last_updated_by", length = 36, nullable = false)
     private String lastUpdatedBy;
 
+    @Setter
     @Column(name = "subject_user_id", length = 64, nullable = false)
     private String subjectUserId;
 
