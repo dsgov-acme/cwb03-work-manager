@@ -82,6 +82,7 @@ public class RiderAllocationDelegate implements JavaDelegate {
         if (StringUtils.isNotEmpty(riderUserId)) {
             try {
                 transaction.setSubjectProfileId(UUID.fromString(riderUserId));
+                transaction.setSubjectUserId(riderUserId);
             } catch (IllegalArgumentException e) {
                 log.error(
                         "Unable to assign subjectUserId of {} to transaction {}",
