@@ -90,6 +90,10 @@ public class RecordService {
             existingRecord.setExpires(updateRequest.getExpires());
         }
 
+        if (!StringUtils.isBlank(updateRequest.getSubjectUserId())) {
+            existingRecord.setSubjectUserId(updateRequest.getSubjectUserId());
+        }
+
         if (updateRequest.getData() != null) {
             final Map<String, Object> mergedMap =
                     transactionService.unifyAttributeMaps(

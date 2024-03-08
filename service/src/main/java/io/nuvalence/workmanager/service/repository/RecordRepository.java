@@ -30,7 +30,11 @@ public interface RecordRepository
                     + " r.status")
     List<Object[]> getStatusCountByRecordDefinitionKey(String recordDefinitionKey);
 
-    @Query(value = "SELECT r.* FROM Record r WHERE CAST(r.data->'email' AS VARCHAR(500)) = :email", nativeQuery = true)
+    @Query(
+            value =
+                    "SELECT r.* FROM Record r WHERE CAST(r.data->>'email' AS VARCHAR(500)) ="
+                            + " :email",
+            nativeQuery = true)
     List<Record> getRecordByEmail(@Param("email") String email);
 
     Record findBySubjectUserId(String subjectUserId);

@@ -8,10 +8,9 @@ import io.nuvalence.workmanager.service.domain.transaction.MissingTransactionDef
 import io.nuvalence.workmanager.service.domain.transaction.Transaction;
 import io.nuvalence.workmanager.service.domain.transaction.TransactionDefinition;
 import io.nuvalence.workmanager.service.generated.controllers.RiderApiDelegate;
-import io.nuvalence.workmanager.service.generated.models.RecordCreationRequest;
-import io.nuvalence.workmanager.service.generated.models.RiderInitializationRequest;
-import io.nuvalence.workmanager.service.generated.models.TransactionCreationRequest;
+import io.nuvalence.workmanager.service.generated.models.*;
 import io.nuvalence.workmanager.service.mapper.MissingSchemaException;
+import io.nuvalence.workmanager.service.mapper.RecordMapper;
 import io.nuvalence.workmanager.service.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +32,7 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
     private final RecordDefinitionService recordDefinitionService;
     private final IndividualService individualService;
     private final IndividualUserLinkService individualUserLinkService;
+    private final RecordMapper mapper;
 
     /**
      * THIS METHOD IS TEMPORARY! Ideally, we would do this work as part of onboarding into the system.
@@ -40,30 +40,48 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
      * @return Nothing (success/failure)
      */
     @Override
-    public ResponseEntity<Void> initializeRiderDetails(RiderInitializationRequest riderInitializationRequest) {
-        Optional<Record> record = recordService.getRecordByEmailDataField(riderInitializationRequest.getEmail())
-                .stream().findFirst();
+    public ResponseEntity<RecordResponseModel> initializeRiderDetails(
+            RiderInitializationRequest riderInitializationRequest) {
+        Optional<Record> record =
+                recordService
+                        .getRecordByEmailDataField(riderInitializationRequest.getEmail())
+                        .stream()
+                        .findFirst();
 
         if (record.isEmpty()) {
             // no records found, create one for the email and user ID
             ResponseEntity<Transaction> createTransactionResponse = createRiderTransaction();
             if (createTransactionResponse.getStatusCode().is2xxSuccessful()) {
+                ResponseEntity<Record> createRecordResponse =
+                        createRiderRecordFromTransaction(
+                                createTransactionResponse.getBody(),
+                                riderInitializationRequest.getEmail(),
+                                riderInitializationRequest.getUserId());
 
+                if (createTransactionResponse.getStatusCode().is2xxSuccessful()) {
+                    return ResponseEntity.ok(
+                            mapper.recordToRecordResponseModel(createRecordResponse.getBody()));
+                }
+
+                return ResponseEntity.status(createRecordResponse.getStatusCode().value()).build();
             } else {
-                return ResponseEntity.status(createTransactionResponse.getStatusCode().value()).build();
+                return ResponseEntity.status(createTransactionResponse.getStatusCode().value())
+                        .build();
             }
-        } else if (!record.get().getSubjectUserId().equals(riderInitializationRequest.getUserId())) {
-            // record was found, but does not match user ID. Update record subjectUserId value
+        } else if (!record.get()
+                .getSubjectUserId()
+                .equals(riderInitializationRequest.getUserId())) {
+            RecordUpdateRequest request =
+                    new RecordUpdateRequest().subjectUserId(riderInitializationRequest.getUserId());
+            Record updatedRecord = recordService.updateRecord(request, record.get());
+            return ResponseEntity.ok(mapper.recordToRecordResponseModel(updatedRecord));
         }
 
-
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(mapper.recordToRecordResponseModel(record.get()));
     }
 
     private ResponseEntity<Transaction> createRiderTransaction() {
-        final TransactionCreationRequest request =
-                new TransactionCreationRequest("MTARiderDummy");
+        final TransactionCreationRequest request = new TransactionCreationRequest("MTARiderDummy");
 
         try {
             final TransactionDefinition definition =
@@ -79,9 +97,9 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
             final Transaction transaction =
                     (request.getMetadata() == null || request.getMetadata().isEmpty())
                             ? transactionService.createTransactionWithIndividualSubject(
-                            definition, individual)
+                                    definition, individual)
                             : transactionService.createTransactionWithIndividualSubject(
-                            definition, individual, request.getMetadata());
+                                    definition, individual, request.getMetadata());
 
             individualUserLinkService.createAdminUserLinkForProfile(transaction);
 
@@ -120,8 +138,8 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
         return location;
     }
 
-    private ResponseEntity<Record> createRiderRecordFromTransaction(Transaction transaction, String email,
-                                                                    String subjectUserId) {
+    private ResponseEntity<Record> createRiderRecordFromTransaction(
+            Transaction transaction, String email, String subjectUserId) {
         Map<String, Object> data = new HashMap<>();
 
         Map<String, Object> pca = new HashMap<>();
@@ -146,7 +164,8 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
         accommodations.put("disabilities", List.of("Epilepsy", "Orthopedic", "Vision"));
         accommodations.put("numCompanion", 0);
         accommodations.put("travelTraining", false);
-        accommodations.put("mobilityDevices", List.of("Walker", "Support Cane", "Power Wheelchair"));
+        accommodations.put(
+                "mobilityDevices", List.of("Walker", "Support Cane", "Power Wheelchair"));
         accommodations.put("interpreterNeeded", false);
         accommodations.put("personalCareAttendant", pca);
         accommodations.put("serviceAnimalRequired", true);
@@ -169,13 +188,14 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
         data.put("primaryPickupAddress", getAddressAsMap(transaction.getExternalId()));
         data.put("communicationPreferences", List.of("Phone Call", "SMS"));
 
-        RecordCreationRequest request = new RecordCreationRequest()
-                .recordDefinitionKey("MTARider")
-                .transactionId(transaction.getId())
-                .data(data)
-                .status("Active")
-                .externalId(transaction.getExternalId())
-                .subjectUserId(subjectUserId);
+        RecordCreationRequest request =
+                new RecordCreationRequest()
+                        .recordDefinitionKey("MTARider")
+                        .transactionId(transaction.getId())
+                        .data(data)
+                        .status("Active")
+                        .externalId(transaction.getExternalId())
+                        .subjectUserId(subjectUserId);
 
         try {
             final RecordDefinition definition =

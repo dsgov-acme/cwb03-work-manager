@@ -1914,8 +1914,12 @@ paths:
             schema:
               $ref: '#/components/schemas/RiderInitializationRequest'
       responses:
-        '200':
-          description: The details of the reservation.
+        200:
+          description: The posted Record post-save. This will include assigned IDs for newly created record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordResponseModel'
   /saved-locations:
     get:
       summary: Retrieve Saved Locations for a Rider
@@ -4323,6 +4327,8 @@ components:
         expires:
           type: string
           format: date-time
+        subjectUserId:
+          type: string
     RecordResponseModel:
       type: object
       required:
