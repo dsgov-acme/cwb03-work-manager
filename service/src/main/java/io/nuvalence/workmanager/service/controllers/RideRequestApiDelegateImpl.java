@@ -1,6 +1,5 @@
 package io.nuvalence.workmanager.service.controllers;
 
-import io.nuvalence.auth.access.AuthorizationHandler;
 import io.nuvalence.workmanager.service.generated.controllers.RideRequestApiDelegate;
 import io.nuvalence.workmanager.service.generated.models.PromiseTimeRequest;
 import io.nuvalence.workmanager.service.generated.models.PromiseTimeResponse;
@@ -9,7 +8,6 @@ import io.nuvalence.workmanager.service.generated.models.ReservationDetailsRespo
 import io.nuvalence.workmanager.service.generated.models.SubmitReservationRequest;
 import io.nuvalence.workmanager.service.mapper.RideRequestMapper;
 import io.nuvalence.workmanager.service.ride.RideRequestService;
-import io.nuvalence.workmanager.service.ride.models.PromiseTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +15,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import jakarta.ws.rs.ForbiddenException;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RideRequestApiDelegateImpl implements RideRequestApiDelegate {
 
-    private final AuthorizationHandler authorizationHandler;
     private final RideRequestService rideRequestService;
     private final RideRequestMapper rideRequestMapper;
 
@@ -48,9 +43,9 @@ public class RideRequestApiDelegateImpl implements RideRequestApiDelegate {
     public ResponseEntity<ReservationDetailsResponse> submitReservation(
             SubmitReservationRequest submitReservationRequest) {
         // TODO: revisit permissions
-        if (!authorizationHandler.isAllowed("update", PromiseTime.class)) {
-            throw new ForbiddenException();
-        }
+        //        if (!authorizationHandler.isAllowed("update", PromiseTime.class)) {
+        //            throw new ForbiddenException();
+        //        }
         return Optional.ofNullable(submitReservationRequest)
                 .map(rideRequestMapper::toEntity)
                 .map(rideRequestService::submitReservation)
@@ -64,9 +59,9 @@ public class RideRequestApiDelegateImpl implements RideRequestApiDelegate {
     @Override
     public ResponseEntity<ReservationDetailsResponse> getReservationDetails(
             ReservationDetailsRequest reservationDetailsRequest) {
-        if (!authorizationHandler.isAllowed("view", PromiseTime.class)) {
-            throw new ForbiddenException();
-        }
+        //        if (!authorizationHandler.isAllowed("view", PromiseTime.class)) {
+        //            throw new ForbiddenException();
+        //        }
 
         return Optional.ofNullable(reservationDetailsRequest)
                 .map(rideRequestMapper::toEntity)
