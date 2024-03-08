@@ -12,8 +12,11 @@ import io.nuvalence.workmanager.service.generated.models.*;
 import io.nuvalence.workmanager.service.mapper.MissingSchemaException;
 import io.nuvalence.workmanager.service.mapper.RecordMapper;
 import io.nuvalence.workmanager.service.service.*;
+import io.nuvalence.workmanager.service.utils.UserUtility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,10 @@ public class RiderApiDelegateImpl implements RiderApiDelegate {
     @Override
     public ResponseEntity<RecordResponseModel> initializeRiderDetails(
             RiderInitializationRequest riderInitializationRequest) {
+        if (!UserUtility.getAuthenticatedUserType().equals("public")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Optional<Record> record =
                 recordService
                         .getRecordByEmailDataField(riderInitializationRequest.getEmail())
