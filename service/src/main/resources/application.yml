@@ -112,6 +112,11 @@ rideRequest:
   baseUrl: "https://promise-time-api-yrsgwvf2va-uc.a.run.app"
   authToken: e7df5183-3fe4-4632-9f34-bee539a8b493
 
+dialogflow:
+  authentication:
+    userName: DFCX_USER
+    password: yNCmEqJfPjxVAkRTrpHR
+
 dashboard:
   url: ${DASHBOARD_URL}
 
