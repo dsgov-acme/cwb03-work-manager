@@ -91,6 +91,7 @@ public class RecordFactory {
                 .lastUpdatedBy(createdByUserId)
                 .lastUpdatedTimestamp(now)
                 .lastUpdatedFrom(transaction)
+                .subjectUserId(request.getSubjectUserId())
                 .data(entity)
                 .build();
     }

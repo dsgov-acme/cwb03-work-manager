@@ -133,6 +133,7 @@ public class Record implements DynamicEntityContainer, UpdateTrackedEntity {
             Transaction lastUpdatedFrom,
             OffsetDateTime createdTimestamp,
             OffsetDateTime lastUpdatedTimestamp,
+            String subjectUserId,
             DynamicEntity data) {
         this.id = id;
         this.externalId = externalId;
@@ -146,6 +147,7 @@ public class Record implements DynamicEntityContainer, UpdateTrackedEntity {
         this.lastUpdatedFrom = lastUpdatedFrom;
         this.createdTimestamp = createdTimestamp;
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
+        this.subjectUserId = subjectUserId;
         this.data = data;
     }
 
@@ -169,6 +171,7 @@ public class Record implements DynamicEntityContainer, UpdateTrackedEntity {
                 && Objects.equal(createdFrom, that.createdFrom)
                 && Objects.equal(createdTimestamp, that.createdTimestamp)
                 && Objects.equal(lastUpdatedTimestamp, that.lastUpdatedTimestamp)
+                && Objects.equal(subjectUserId, that.subjectUserId)
                 && Objects.equal(data, that.data);
     }
 
@@ -186,6 +189,7 @@ public class Record implements DynamicEntityContainer, UpdateTrackedEntity {
                 createdFrom,
                 createdTimestamp,
                 lastUpdatedTimestamp,
+                subjectUserId,
                 data);
     }
 

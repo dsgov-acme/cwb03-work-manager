@@ -1901,6 +1901,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReservationDetailsResponse'
+  /rider/initialize:
+    post:
+      summary: Initializes the rider details
+      operationId: initializeRiderDetails
+      tags: [ 'Rider' ]
+      requestBody:
+        description: The rider initialization request.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiderInitializationRequest'
+      responses:
+        200:
+          description: The posted Record post-save. This will include assigned IDs for newly created record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordResponseModel'
   /saved-locations:
     get:
       summary: Retrieve Saved Locations for a Rider
@@ -4228,6 +4247,16 @@ components:
       properties:
         reservationId:
           type: string
+    RiderInitializationRequest:
+      type: object
+      required:
+        - userId
+        - email
+      properties:
+        userId:
+          type: string
+        email:
+          type: string
     MTALocation:
       type: object
       properties:
@@ -4280,6 +4309,8 @@ components:
           type: string
         externalId:
           type: string
+        subjectUserId:
+          type: string
         data:
           type: object
           additionalProperties: true
@@ -4296,6 +4327,8 @@ components:
         expires:
           type: string
           format: date-time
+        subjectUserId:
+          type: string
     RecordResponseModel:
       type: object
       required:

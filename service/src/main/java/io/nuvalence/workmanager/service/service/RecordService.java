@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -68,6 +69,10 @@ public class RecordService {
         return repository.findAll(filter.getRecordSpecification(), filter.getPageRequest());
     }
 
+    public List<Record> getRecordByEmailDataField(String email) {
+        return repository.getRecordByEmail(email);
+    }
+
     /**
      * Update a record.
      *
@@ -83,6 +88,10 @@ public class RecordService {
 
         if (!StringUtils.isBlank(String.valueOf(updateRequest.getExpires()))) {
             existingRecord.setExpires(updateRequest.getExpires());
+        }
+
+        if (!StringUtils.isBlank(updateRequest.getSubjectUserId())) {
+            existingRecord.setSubjectUserId(updateRequest.getSubjectUserId());
         }
 
         if (updateRequest.getData() != null) {
