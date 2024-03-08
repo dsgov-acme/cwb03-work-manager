@@ -72,6 +72,12 @@ public class WebSecurityConfig {
     @Value("${cerbos.uri}")
     private String cerbosUri;
 
+    @Value("${dialogflow.authentication.userName}")
+    private String dialogFlowUserName;
+
+    @Value("${dialogflow.authentication.password}")
+    private String dialogFlowPassword;
+
     private static final String NAMESPACE = "wm";
 
     private AuthorizationHandler authorizationHandler;
@@ -128,7 +134,8 @@ public class WebSecurityConfig {
                                 authorizationHandler, NAMESPACE, "/engine-rest/**"), TokenFilter.class)
                 .addFilterAfter(
                         new BasicAuthFilter(NAMESPACE,
-                                new DialogflowAuthenticationProvider(NAMESPACE)
+                                new DialogflowAuthenticationProvider(this.dialogFlowUserName, this.dialogFlowPassword,
+                                        NAMESPACE)
                         ), CamundaPermissionFilter.class
                 )
                 .build();
