@@ -87,7 +87,7 @@ public abstract class RideMapper {
                         .dropoffLocation(getAddressLabel(dropLocation))
                         .status(status)
                         .driverName("John Smith")
-                        .driverVehicle("Mazda 3")
+                        .driverVehicle("Ford Transit Van XLT")
                         .build();
         populateDialogflowPropertiesOnRideSummary(ride);
         return ride;
